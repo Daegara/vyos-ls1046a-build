@@ -2,29 +2,45 @@
 
 # VyOS for Mono Gateway Development Kit (NXP LS1046A)
 
-This repo builds VyOS for the aarch64 [Mono Gateway Development Kit](https://docs.mono.si/gateway-development-kit/hardware-description) based on latest [VyOS 'rolling' release](https://vyos.net/get/nightly-builds/). New [builds](https://github.com/mihakralj/vyos-ls1046a-build/releases) are released each Friday.
+This repo builds VyOS for the aarch64 [Mono Gateway Development Kit](https://docs.mono.si/gateway-development-kit/hardware-description) based on latest [VyOS 'rolling' release](https://vyos.net/get/nightly-builds/). New [builds](https://github.com/mihakralj/vyos-ls1046a-build/releases) are released each Friday 01:00 UTC.
 
-**This is the first and only VyOS build for bare-metal aarch64 networking hardware with support for both ASIC HW-offload *and* VPP.**
+**This is the first and only VyOS build for bare-metal aarch64 networking hardware targeting support for both ASIC HW-offload *and* VPP.**
 
-**The hardware earns the effort.** The Mono Gateway Development Kit is build around the [NXP LS1046A](https://www.nxp.com/docs/en/data-sheet/LS1046A.pdf) - four Cortex-A72 cores at 1.6 GHz, with a hardware ASIC alongside which chews through packets before the CPU even notices they've arrived. The Mono Gateway Development Kit further adds 8 GB of ECC DDR4, three RJ45 ports, and two SFP+ cages - an ideal package for HW-offloaded, wire-speed networking on aarch64.
+**The hardware earns the effort.** The Mono Gateway Development Kit is build around the [NXP LS1046A](https://www.nxp.com/docs/en/data-sheet/LS1046A.pdf) SoC - four Cortex-A72 cores at 1.6 GHz, with a hardware ASIC alongside which chews through packets before the CPU even notices they've arrived. The Mono Gateway Development Kit further adds 8 GB of ECC DDR4, three RJ45 ports, and two SFP+ cages - an ideal package for HW-offloaded, wire-speed networking on aarch64.
 
-**There is nothing in this class for consumer home routers** and that gap is an opportunity. Historically, NXP sold the LS1046A to telecoms carriers and switch vendors, and provides a generalised [Application Solutions Kit (ASK)](https://www.nxp.com/design/design-center/software/embedded-software/software-for-industrial-networking/gateway-ask:VORTIQA-ASK) to control the HW-offload network accelerator functions. In developing the Gateway Development Kit, Mono purchased and with permission [released](https://github.com/we-are-mono/ASK) the ASK source under GPL-2.0.
+**Nothing in this class exists for use a home router,** and that gap is an opportunity. Historically, NXP sold the LS1046A SoC to telecoms carriers and switch vendors, alongside a generalised [Application Solutions Kit (ASK)](https://www.nxp.com/design/design-center/software/embedded-software/software-for-industrial-networking/gateway-ask:VORTIQA-ASK) to control the HW-offload network accelerator functions. In developing the Gateway Development Kit, Mono purchased and with permission, [released the ASK source](https://github.com/we-are-mono/ASK) under GPL v2.0. 
 
-**VyOS enables pushing this HW to its full potential with aarch64 becoming a first-class citizen in 1.5.x.**  This repo documents the development of ASK HW-offloading rebuilt to modern standards as ASK2, and the compliment this provides to VPP on this HW.
+The LS1046A SoC uses the Data Path Acceleration Architecture (DPAA1), which defines the ASIC functions, and how they interoperate. 
 
-## Getting Started
+**VyOS enables pushing this hardware to its full potential now aarch64 is becoming a first-class citizen in `1.5.x`.**  This repo documents the development of DPAA1/ASK HW-offloading rebuilt to modern standards as `ASK2`, and the compliment this can provide to Vector Packet Processing (VPP) on this HW.
+
+## Overview & Getting Started
 
 | **I want to...**                 | **Go to...**                                                                                                        |
 | -------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
 | **Use VyOS** on the Mono Gateway | **[INSTALL.md](INSTALL.md)**: Start here.                                                                           |
-| **Understand the HW**            | [HARDWARE.md](HARDWARE.md): Physical HW, and logical network architecture                                           |
-| **Update Firmware**              | [FIRMWARE.md](FIRMWARE.md): A brief how-to                                                                          |
+| **Understand the HW**            | [HARDWARE.md](HARDWARE.md): Physical HW, boot-chain and known quirks                                                |
+| **Update the Firmware**          | [FIRMWARE.md](FIRMWARE.md): A brief how-to guide                                                                    |
 | **Control HW & diagnose issues** | [HWCTL.md](HWCTL.md):  Control the main LEDs with `led` & diagnose issues with the seven built-in `*-check` scripts |
-| **See what changed**             | [plans/CHANGELOG.md](plans/CHANGELOG.md): per-build changelog                                                       |
-| **Understand how this started**  | [STARTING-GATE.md](STARTING-GATE.md): Getting mainline VyOS to work (at all)                                        |
-| Understand work towards ASK2     | [`plans/ASK-PLANS.md`](ASK-PLANS.md)Index and source-of-truth                                                       |
-| Dig into the detail              | [RABBITHOLE.md](RABBITHOLE.md): Down you go...                                                                      |
-|                                  |                                                                                                                     |
+| **Understand HW-Offloading**     | [HW-OFFLOADING.md](HW-OFFLOADING.md): Overview of the DPAA1/ASK network architecture                                |
+| **See how this started**         | [STARTING-GATE.md](STARTING-GATE.md): Getting mainline VyOS to work (at all)                                        |
+| **See what's changed**           | [plans/CHANGELOG.md](plans/CHANGELOG.md): per-build changelog                                                       |
+| **Dig into the archives**        | [RABBITHOLE.md](RABBITHOLE.md): Down you go...                                                                      |
+
+## Architecture & Design
+
+The design specs and deep-dives behind the build. Start here to understand *how* it works, not just how to run it. Plans and Specs utilise [HADS](https://github.com/catcam/hads) to structure information.
+
+| Document                                                                           | What's inside                                                                                                                                                                                                                   |
+| ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [specs/dpaa1-afxdp-modernization-spec.md](specs/dpaa1-afxdp-modernization-spec.md) | **DPAA1 AF_XDP driver modernization** — the flavor-ops abstraction, XSK-backed BMan pools, per-CPU NAPI on dedicated QMan channels, the four FMan HW offloads (CC / HM / Policer / CEETM), and the per-milestone status tracker |
+| [plans/NETWORKING-DEEP-DIVE.md](plans/NETWORKING-DEEP-DIVE.md)                     | **DPAA1 networking internals** — FMan architecture, QBMan portal allocation, the three-driver split (`fsl_dpaa_mac` / `fsl_dpa` / `fsl_dpaa_eth`), and how packets flow before the CPU sees them                                |
+| [specs/dual-dataplane.md](specs/dual-dataplane.md)                                 | **Single-image dual-dataplane model** — one ISO ships every datapath; the silicon mode state machine (mainline/RSS ↔ ASK offload, with VPP as an AF_XDP overlay), runtime switching, and the reversibility contract             |
+| [plans/ASK-PLANS.md](ASK-PLANS.md)                                                 | **Understand work towards ASK2** — what ASK 1.x did right, what's changing in ASK2, and why                                                                                                                                     |
+| [specs/ask2-rewrite-spec.md](specs/ask2-rewrite-spec.md)                           | **ASK2 hardware accelerator** — the modern in-tree rewrite of the FMan/QMan offload engine: `ask.ko`, the PCD subsystem, config-driven engagement (`set system offload ask`)                                                    |
+| [specs/vpp-dpaa1-ls1046a-spec.md](specs/vpp-dpaa1-ls1046a-spec.md)                 | **VPP AF_XDP overlay** — kernel-bypass dataplane on the 10G SFP+ ports, thermal constraints, and the kernel↔VPP coexistence model                                                                                               |
+| [plans/PORTING.md](plans/PORTING.md)                                               | **Porting postmortem** — driver archaeology, the boot-flow rework, and what broke (and why) bringing mainline VyOS up on the LS1046A                                                                                            |
+
 ## Build and Release Assets
 
 Automated weekly (Friday 01:00 UTC) via GitHub Actions.
@@ -61,26 +77,6 @@ This is, as far as anyone can tell, the only VyOS build targeting bare-metal ARM
 
 **Full FRRouting integration.** BGP, OSPF, IS-IS, BFD, MPLS, VXLAN, segment routing, PIM: all in the config tree with proper dependency resolution at commit time. Full stack, no glue scripts, no surprises.
 
-
-### DPAA1 Driver Modernization
-
-An ongoing effort modernizes the mainline DPAA1 driver into a single shared kernel binary (consumed in different runtime modes — kernel `default`, `vpp` AF_XDP, `ask` offload, all shipping in one image) with HW-accelerated AF_XDP and four FMan/QMan hardware offloads. Full design and per-milestone status: [specs/dpaa1-afxdp-modernization-spec.md](specs/dpaa1-afxdp-modernization-spec.md).
-
-**Shipping and board-validated today:**
-
-- **Flavor-ops abstraction (M0)** — per-`dpaa_priv` ops tables, RCU-NULL-safe; byte-identical to mainline when no flavor module is loaded.
-- **AF_XDP zero-copy plumbing (M1–M3-3)** — `ndo_xsk_wakeup`, XSK-backed BMan pool, per-CPU NAPI + dedicated QMan channels per qband, cluster-aware pinning. Driver proven to drop **0%** at line rate; ~5.57 Gbit/s aggregate RX measured (bottleneck is the single userspace receiver, not the NIC).
-- **HW capability layer** — FMan PCD caps live-probed (`0x17` = CC HM POL PARSER on ucode 210).
-- **HM VLAN-strip offload (M3-3c)** — live on hardware (`ethtool -k` → `rx-vlan-offload: on`).
-- **Policer + CEETM scaffolds (M3-3d/e)** — install/stub APIs compiled in and cap-probed, stable contracts for the VyOS CLI consumers.
-
-**What remains for a feature-complete driver** (see the spec's "What remains for a complete DPAA1 driver" table):
-
-- **Two real kernel forward-ports** — the FMan PCD subsystem (unblocks CC steering and the productive HM/Policer datapaths) and the QMan-CEETM driver (~4500 LOC, absent from mainline 6.18, needed for HW egress shaping).
-- **Non-kernel glue** — vyos-1x CLI consumers for HM/Policer/CEETM, a traffic generator for the functional datapath gates, and a multi-core receiver to record the literal ≥7 Gbps figure.
-
-No further *architectural* work is required — the ops abstraction and capability layer already accommodate every remaining consumer.
-
 ## License
 
-VyOS sources are GPLv2. ARM64 builder image from [huihuimoe/vyos-arm64-build](https://github.com/huihuimoe/vyos-arm64-build). Hardware documentation from [mono-gateway-docs](https://github.com/ryneches/mono-gateway-docs).
+VyOS sources are GPL 2.0. ARM64 builder image from [huihuimoe/vyos-arm64-build](https://github.com/huihuimoe/vyos-arm64-build). Hardware documentation from [mono-gateway-docs](https://github.com/we-are-mono/docs/tree/master).

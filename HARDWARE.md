@@ -26,7 +26,7 @@ The Mono Gateway Development Kit is an extremely versatile device, and its desig
 
 In order to use this device effectively, some foundational knowledge of how it operates is required, starting with how it effects the initial boot process. 
 
-There is no fixed 'BIOS' as you might find on an x86 computer, as this is an embedded device. The user can however control: the boot source (via a physical dip-switch on the PCB), and after initialisation of the hardware via the U-Boot bootloader, the next device in the boots chain.
+There is no fixed 'BIOS' as you might find on an x86 computer, as this is an embedded device. The user can however control: the boot source (via a physical dip-switch on the PCB), and after initialisation of the hardware via the U-Boot bootloader, what boots next in the chain.
 
 >**Note:** Use **NOR** as your default boot device, **except when updating the NOR [FIRMWARE.md](FIRMWARE.md)**. This ensures that after installing an OS to the eMMC, your device remains bootable.
 
@@ -69,7 +69,7 @@ flowchart LR
 ### Boot chain: for VyOS
 
 After installing Vyos there are three notable changes to the boot chain. 
-1. Booting from eMMC will fail. You must boot from **NOR**. This is the only route to access 'Recovery linux'
+1. Booting from eMMC will fail. You must boot from **NOR**. This is now also the only route to access 'Recovery linux', if it is required.
 2. If a VyOS USB is inserted, it boot from it (live mode) before VyOS Installed on eMMC
 3. Reading from `/boot/vyos.env` from eMMC p3 → defines the VyOS named image that is booted
 
