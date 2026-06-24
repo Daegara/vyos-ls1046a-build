@@ -10,10 +10,10 @@ To understand HW-offload on the LS1046A SoC you first need to understand the DPA
 
 Lots of acronyms. Lets unpack.
 
-ASIC = [Application Silicon Integrated Circuit](https://en.wikipedia.org/wiki/Application-specific_integrated_circuit) — Built to do specific things, really well.
-DPAA = Data Path Acceleration Architecture — Defines the ASIC accelerator functions
-ASK = Application Solutions Kit — Defines how the ASIC functions interoperate
-Microcode — In this specific context, defines which ASIC functions are enabled
+- ASIC = [Application Silicon Integrated Circuit](https://en.wikipedia.org/wiki/Application-specific_integrated_circuit) — Built to do specific things, really well
+- DPAA = Data Path Acceleration Architecture — Defines the ASIC accelerator functions
+- ASK = Application Solutions Kit — Defines how the ASIC functions interoperate
+- Microcode — In this specific context, defines which ASIC functions are enabled
 
 This is a big topic, best approached by first visualising the outcome, as below.
 
@@ -63,10 +63,10 @@ A visual overview of DPAA1 of the LS1064A SoC in the Mono Gateway development ki
 
 One diagram in and more Acronyms to expand.
 
-FMan = Frame manager — inspects, splits, enqueues on ingress/egress
-QMan = Queue manager — controls input/output queues and scheduling for other functions
-BMan = Buffer manager — controls frame/data buffers in memory for other functions
-CAAM (not shown) = Cryptographic Accelerator and Assurance Module — performs accelerated crypto functions
+- FMan = Frame manager — inspects, splits, enqueues on ingress/egress
+- QMan = Queue manager — controls input/output queues and scheduling for other functions
+- BMan = Buffer manager — controls frame/data buffers in memory for other functions
+- CAAM (not shown) = Cryptographic Accelerator and Assurance Module — performs accelerated crypto functions
 
 The curious can find more detail in existing public NXP documentation on [QorIQ DPAA1](https://docs.nxp.com/bundle/GUID-39A0A446-70E5-4ED7-A580-E7508B61A5F1/page/GUID-194DD21B-FC7F-4AF4-BB44-86F4B4A402D2.html) and [Layerscape DPAA/DPAA1](https://docs.nxp.com/bundle/LLDPUG_L6.1.36_2.1.0/page/topics/introduction_003.html) two names, same thing. The name change was to differentiate from the (unrelated) DPAA2 architecture that launched later.
 
