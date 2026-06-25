@@ -1,6 +1,7 @@
 # Getting mainline VyOS to initially boot
 
-Thirteen things were broken out of the box. Most failed silently. The worst ones looked like they worked but quietly haemorrhaged performance or dropped interfaces without a trace in dmesg.
+What breaks when you drop a generic VyOS ARM64 ISO onto NXP Layerscape silicon, and the exact fixes that survived contact with the hardware. Thirteen things were broken out of the box. Most of the failures are silent, which is the part that costs you an afternoon. The worst ones looked like they worked but quietly haemorrhaged performance or dropped interfaces without a trace in dmesg.
+
 
 | # | Problem | Root Cause | Fix |
 |---|---------|------------|-----|
