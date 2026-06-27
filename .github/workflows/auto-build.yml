@@ -44,6 +44,8 @@ on:
         required: false
       SSH_ALLOWED_SIGNERS:
         required: false
+      DISCORD_BOT_KEY:
+        required: false
 
 env:
   DEBIAN_MIRROR: http://deb.debian.org/debian/
@@ -262,6 +264,20 @@ jobs:
           retention-days: 15
           if-no-files-found: error
           compression-level: 0
+
+  notify:
+    needs:
+      - build_iso
+    if: always()
+    uses: ./.github/workflows/discord.yml
+    with:
+      status: ${{ needs.build_iso.result }}
+      build_version: ${{ needs.build_iso.outputs.build_version }}
+      image_name: ${{ needs.build_iso.outputs.image_name }}
+      build_branch: 'default'
+      release_type: Rolling
+    secrets:
+      DISCORD_BOT_KEY: ${{ secrets.DISCORD_BOT_KEY }}
 
   publish:
     needs:
