@@ -57,9 +57,9 @@ fan-check >/dev/null || logger -p user.err "fan-check failed rc=$?"
 
 # 2. The `led` command (helper)
 
->NOTE: By default, the stock LED behaviour of the Mono Gateway Development Kit is **not** modified. The helper enables both static user-set, or programmatic control of the LED in response to user-defined triggers, e.g. indicating traffic throughput.
+>**NOTE:** By default, the stock LED behaviour of the Mono Gateway Development Kit is **not** modified. The helper enables both static user-set, or programmatic control of the LED in response to user-defined triggers, e.g. indicating traffic throughput.
 
-Every ISO installs [board/scripts/led.py](board/scripts/led.py) as **`/usr/local/bin/led`** — a flag-free, Python-stdlib-only CLI that treats the four LP5812 channels as one logical RGBW indicator. Every colour change **fades** from the current state to the target (linear interpolation in raw 8-bit PWM space, 50 ms total), and the helper forces `trigger=none` before writing, so it always works regardless of what trigger was active. Reads work as user `vyos`, but writes require `sudo`.
+Every ISO installs [board/scripts/led.py](board/scripts/led.py) as **`/usr/local/bin/led`** a flag-free, Python-stdlib-only CLI that treats the four LP5812 channels as one logical RGBW indicator. Every colour change **fades** from the current state to the target (linear interpolation in raw 8-bit PWM space, 50 ms total), and the helper forces `trigger=none` before writing, so it always works regardless of what trigger was active. Reads work as user `vyos`, but writes require `sudo`.
 
 ```bash
 led                      # no args: read and print current state — "R G B W  #RRGGBBWW"
@@ -149,10 +149,10 @@ The default colour palette defined in [board/scripts/led.py](board/scripts/led.p
 
 As the overview of these helper scripts hints, they can enable functionality beyond assessing the status of the HW, including:
 
-- Using the LED as a \<trigger\> indicator
-	- e.g. Using the LED as a network activity indicator
+- Using the LED as a \<trigger\> indicator, e.g.:
+	- Using the LED as a network activity indicator
 	- Pulsing the LED as a CPU-load driven heartbeat
-- Set boot-time defaults for LED behaviour
+- Setting boot-time defaults for LED behaviour
 - Manual override of CPU-fan (for debug only)
 - CPU-fan curve tweaking (no longer required)
  
@@ -216,7 +216,7 @@ done
 
 A range of system activity states can be used to trigger LED behaviour. Some are enabled by default, whilst others require specific kernel modules to be loaded on-demand.
 
-By default, `none`, `disk-activity`, `disk-{read,write}`, `cpu`, `cpu0..3`, `panic`, and `mmc0` are usable for defining the LED state. The kernel exposes `mmc0::` and the SFP cage LEDs (`sfp{0,1}:link`, `sfp{0,1}:activity`) as well, which can be directly mirrored; for more see §3.1.4.
+By default, `none`, `disk-activity`, `disk-{read,write}`, `cpu`, `cpu0..3`, `panic`, and `mmc0` are usable for defining the LED state. The kernel exposes `mmc0::` and the SFP cage LEDs (`sfp{0,1}:link`, `sfp{0,1}:activity`) as well, which can be directly mirrored.
 
 Via additional **loadable kernel modules** built for this kernel, `heartbeat`, `timer`, `oneshot`, `netdev`, etc, may also be used. To load these on-demand use `sudo modprobe ledtrig-<name>`.
 
@@ -314,7 +314,7 @@ systemctl enable --now mono-leds.service
 
 ## 3.2 Chassis fan (Microchip EMC2305)
 
-==**WARNING:** Exercise caution. Unlike modern x86 CPUs which have extensive thermal-throttling and emergency thermal-shutdown protections, there are limited over-temperature controls on embedded device SoCs like the LS1046A. Thermal runaway may occur if thermal load exceeds cooling capacity risking permanent damage to the SoC.==
+>**WARNING:** Exercise caution. Unlike modern x86 CPUs which have extensive thermal-throttling and emergency thermal-shutdown protections, there are limited over-temperature controls on embedded device SoCs like the LS1046A. Thermal runaway may occur if thermal load exceeds cooling capacity risking permanent damage to the SoC.
 
 The EMC2305 is a 5-channel PWM fan controller at `0x2e`, reached via the SoC I²C0 controller (`2180000.i2c`) and the on-board mux (visible as bus `7-002e`). Channel 1 (`pwm1` / `fan1_input`) drives the chassis fan; channel 2 (`pwm2` / `fan2_input`) is wired but currently unused (reads `fan2_input = 0`). The other three channels are not exported by the Device Tree Source (DTS).
 

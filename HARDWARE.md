@@ -9,7 +9,7 @@ The primary source of truth for the physical hardware is the [Mono development k
 | **CPU**                        | NXP QorIQ LS1046A SoC: 4x Cortex-A72 @1.6 GHz                                                                                                                                                                                                 |
 | **RAM**                        | 8 GB ECC DDR4 @2100 MT/s                                                                                                                                                                                                                      |
 | **Networking**                 | 2x SFP+ 10 Gbps (10GBASE-R)  <br>3x RJ45 1 Gbps (1000BASE-T)                                                                                                                                                                                  |
-| **M.2 expansion**==*==         | 1x M.2_1 Key-E (Left) 'Smart home' — interfaces: SDIO, UART, SPI, I2C — Usage: low-bandwidth tri-radio cards (Wifi5, Bluetooth, Thread)<br>1x M.2_2 Key-E (Right) 'Wireless' — interfaces: UART, PCIe 3.0 x1 — Usage: Wifi6 2x2 MU-MIMO cards |
+| **M.2 expansion\***            | 1x M.2_1 Key-E (Left) 'Smart home' — interfaces: SDIO, UART, SPI, I2C — Usage: low-bandwidth tri-radio cards (Wifi5, Bluetooth, Thread)<br>1x M.2_2 Key-E (Right) 'Wireless' — interfaces: UART, PCIe 3.0 x1 — Usage: Wifi6 2x2 MU-MIMO cards |
 | **Storage**                    | *User selectable boot source via PCB dip-switch:*<br>1x 64 MB NOR flash for Bootloader<br>1x 32 GB eMMC for Operating System                                                                                                                  |
 | **Firmware**                   | NOR + eMMC (user-updatable) firmware targets available                                                                                                                                                                                        |
 | **Boot loader**                | U-Boot 2025.04 via `booti`                                                                                                                                                                                                                    |
@@ -19,7 +19,7 @@ The primary source of truth for the physical hardware is the [Mono development k
 > **NOTE:** As a development kit, additional features are included to enable: 
 > OS installation, device recovery, firmware updates, and HW debugging of both the SoC and PCB
 
-==**\*WARNING:** The two m.2 E-key slots have different presented interfaces and pinouts. Compatibility with user-supplied m.2 E-key hardware is not guaranteed, and incorrect use may result in hardware damage. Check the datasheet for your intended m.2 E-key device for interface requirements and pin-compatibility. For a list of the tested m.2 devices, and full socket pin-assignments see - [Mono hardware description](https://docs.mono.si/gateway-development-kit/hardware-description#supported-cards)==
+>**\*WARNING:** The two m.2 E-key slots have different presented interfaces and pinouts. Compatibility with user-supplied m.2 E-key hardware is not guaranteed, and incorrect use may result in hardware damage. Check the datasheet for your intended m.2 E-key device for interface requirements and pin-compatibility. For a list of the tested m.2 devices, and full socket pin-assignments see - [Mono hardware description](https://docs.mono.si/gateway-development-kit/hardware-description#supported-cards)
 
 The Mono Gateway Development Kit is an extremely versatile device, and its design enables user-recovery in an abnormally wide range of scenarios. Even if rendered *'bricked'* and unbootable, the device still may be recovered via a (separate) JTAG hardware debugger probe ([e.g. TC2050](https://www.tag-connect.com/product/tc2050-idc-050-all)).
 
@@ -30,7 +30,7 @@ In order to use this device effectively, some foundational knowledge of how it o
 
 There is no fixed 'BIOS' ROM as you might find on an x86 computer, as this is an embedded device. The user can however control the boot source (via a physical dip-switch on the PCB), and after initialisation of the hardware via the U-Boot bootloader, what boots next in the chain.
 
->**Note:** Use **NOR** as your default boot device, **except when updating the NOR [FIRMWARE.md](FIRMWARE.md)**. This ensures that after installing an OS to the eMMC, your device remains bootable.
+>**NOTE:** Use **NOR** as your default boot device, **except when updating the NOR [FIRMWARE.md](FIRMWARE.md)**. This ensures that after installing an OS to the eMMC, your device remains bootable.
 
 ## 2.1 Boot chain: As shipped + OpenWRT + Opnsense
 
@@ -66,7 +66,7 @@ flowchart LR
     end
 ```
 
->**Note:** The EFI/GRUB path is permanently broken. DPAA1 (see: [HW-OFFLOADING.md](HW-OFFLOADING.md)) reserved-memory nodes in the device tree cause GRUB to OOM during `bootefi`. Nobody plans to fix it. `booti` works, costs nothing, and skips GRUB entirely. Sometimes the universe does you a favour. 
+>**NOTE** The EFI/GRUB path is permanently broken. DPAA1 (see: [HW-OFFLOADING.md](HW-OFFLOADING.md)) reserved-memory nodes in the device tree cause GRUB to OOM during `bootefi`. Nobody plans to fix it. `booti` works, costs nothing, and skips GRUB entirely. Sometimes the universe does you a favour. 
 
 ## 2.2 Boot chain: for VyOS
 
@@ -98,7 +98,7 @@ flowchart LR
     end
 ```
 
->**Note:** If installing VyOS onto the eMMC per [INSTALL.md](INSTALL.md) you will (currently) lose the ability to directly boot from eMMC. This is a known [issue#24](https://github.com/mihakralj/vyos-ls1046a-build/issues/24) for which a fix is known, but not yet deployed. This can be remedied via re-imaging the eMMC firmware located in the first 32 MB 'reserved' partition on the eMMC. To do so manually, see [FIRMWARE.md](FIRMWARE.md).
+>**NOTE:** If installing VyOS onto the eMMC per [INSTALL.md](INSTALL.md) you will (currently) lose the ability to directly boot from eMMC. This is a known [issue#24](https://github.com/mihakralj/vyos-ls1046a-build/issues/24) for which a fix is known, but not yet deployed. This can be remedied via re-imaging the eMMC firmware located in the first 32 MB 'reserved' partition on the eMMC. To do so manually, see [FIRMWARE.md](FIRMWARE.md).
 
 ## 2.2.1 Diving deeper
 
@@ -143,7 +143,7 @@ Whilst readable, the correction will break for any subsequently loaded OS (VyOS,
 
 Maintaining a manual patch all OS maintainers must apply manually was not seen as a consistent or supportable approach, and following a discord straw-poll, Mono elected to revert the cosmetic fix from [Mono firmware 2026-03-28](https://github.com/we-are-mono/meta-mono/blob/master/CHANGELOG.md#2026-03-28--remove-fman-ethernet-alias-ordering-patch-and-dt-aliases) onwards. This provide a more consistent and supportable experience and reverts the (at-boot) port mapping to that shown in §3.2 below.
 
-> **Note:** All units, as shipped, have the cosmetic correction applied, and the interface order within the firmware 'Recovery Linux' environment reflects this correction. This may see the same interface assigned during the first firmware update, change it's assigned name after the firmware update. This is expected behaviour, but can be confusing if unexpected.
+> **NOTE:** All units, as shipped, have the cosmetic correction applied, and the interface order within the firmware 'Recovery Linux' environment reflects this correction. This may see the same interface assigned during the first firmware update, change it's assigned name after the firmware update. This is expected behaviour, but can be confusing if unexpected.
 
 ## 3.2 The hardware order, as enumerated - 1,2,0,3,4 
 ```mermaid
@@ -207,7 +207,7 @@ block-beta
 ```
 The only notable anomaly this introduces is the order in which interfaces are printed via commands like `ip address show`. This is an extremely small price to pay for regaining certainty in of which interface you have just plugged in.
 
->**Note:** As this renaming occurs *within VyOS*, the interface numbering seen in the separate Firmware 'Recovery Linux' environment continues to reflect the ordering shown in §3.2 above. Be mindful of this, if you regularly update the firmware, and rely on muscle-memory for interface names!
+>**NOTE:** As this renaming occurs *within VyOS*, the interface numbering seen in the separate Firmware 'Recovery Linux' environment continues to reflect the ordering shown in §3.2 above. Be mindful of this, if you regularly update the firmware, and rely on muscle-memory for interface names!
 
 ---
 
