@@ -2,17 +2,17 @@
 
 # VyOS for Mono Gateway Development Kit (NXP LS1046A)
 
-This repo builds VyOS for the aarch64 [Mono Gateway Development Kit](https://docs.mono.si/gateway-development-kit/hardware-description) based on latest [VyOS 'rolling' release](https://vyos.net/get/nightly-builds/). New [builds](https://github.com/mihakralj/vyos-ls1046a-build/releases) are released each Friday 01:00 UTC.
+This repo builds VyOS for the aarch64 [Mono Gateway Development Kit](https://docs.mono.si/gateway-development-kit/hardware-description) based on latest [VyOS 1.5.x. 'rolling' release](https://vyos.net/get/nightly-builds/). New [builds](https://github.com/mihakralj/vyos-ls1046a-build/releases) are released each Friday 01:00 UTC.
 
 **This is the first and only VyOS build for bare-metal aarch64 networking hardware targeting support for both ASIC HW-offload *and* VPP.**
 
 **The hardware earns the effort.** The Mono Gateway Development Kit is build around the [NXP LS1046A](https://www.nxp.com/docs/en/data-sheet/LS1046A.pdf) SoC - four Cortex-A72 cores at 1.6 GHz, with a hardware ASIC alongside which chews through packets before the CPU even notices they've arrived. The Mono Gateway Development Kit further adds 8 GB of ECC DDR4, three RJ45 ports, and two SFP+ cages - an ideal package for HW-offloaded, wire-speed networking on aarch64.
 
-**Nothing in this class exists for use a home router,** and that gap is an opportunity. Historically, NXP sold the LS1046A SoC to telecoms carriers and switch vendors, alongside a generalised [Application Solutions Kit (ASK)](https://www.nxp.com/design/design-center/software/embedded-software/software-for-industrial-networking/gateway-ask:VORTIQA-ASK) to control the HW-offload network accelerator functions. In developing the Gateway Development Kit, Mono purchased and with permission, [released the ASK source](https://github.com/we-are-mono/ASK) under GPL v2.0. 
+**Nothing in this class exists for use as a home router,** and that gap is an opportunity. Historically, NXP sold the LS1046A SoC to telecoms carriers and switch vendors, alongside a generalised [Application Solutions Kit (ASK)](https://www.nxp.com/design/design-center/software/embedded-software/software-for-industrial-networking/gateway-ask:VORTIQA-ASK) to control the HW-offload network accelerator functions. In developing the Gateway Development Kit, Mono purchased and with permission, [released the ASK source](https://github.com/we-are-mono/ASK) under GPL v2.0. 
 
 The LS1046A SoC uses the Data Path Acceleration Architecture (DPAA1), which defines the ASIC functions, and how they interoperate. 
 
-**VyOS enables pushing this hardware to its full potential now aarch64 is becoming a first-class citizen in `1.5.x`.**  This repo documents the development of DPAA1/ASK HW-offloading rebuilt to modern standards as `ASK2`, and the compliment this can provide to Vector Packet Processing (VPP) on this HW.
+**VyOS enables pushing this hardware to its full potential now that aarch64 is becoming a first-class citizen in `1.5.x`.**  This repo documents the development of DPAA1/ASK HW-offloading rebuilt to modern standards as `ASK2`, and the compliment this can provide to Vector Packet Processing (VPP) on this HW.
 
 ## Overview & Getting Started
 

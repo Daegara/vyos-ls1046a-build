@@ -3,6 +3,10 @@
 
 Achieving wire-speed throughput on the Mono Gateway Development Kit requires utilising the HW-offloading capabilities of the LS1046A SoC, specifically it's I/O ASIC. Here we provide an overview of what this is, how it works, and why rebuilding parts of the SW machinery as 'ASK2' for use modern Kernels (6.18+), as used in VyOS 'Rolling', is now essential.
 
+If you want a deep-dive on this topic - see [arch/README.md](arch/README.md)
+
+For an accessible higher-level overview - continue below.
+
 ---
 # 1. DPAA1/ASK Network Architecture Overview
 
@@ -99,7 +103,7 @@ NXP DPAA1/Layerscape DPAA, have been around in the mainline Linux Kernel in vari
 
 ### 2.1.1 Limitations
 
-The mainline DPAA1 driver is built to leverage the Coarse Classifier functions of the open-source `106.4.18` NXP microcode that is [freely available](https://github.com/nxp-qoriq/qoriq-fm-ucode) . As the function's name suggests, this classifier enables comparatively limited functionality of the underlying ASIC, and this microcode version enables comparatively little. In performance terms, this combination was designed for a previous era of Linux networking.
+The mainline DPAA1 driver is built to leverage the Coarse Classifier functions of the open-source `106.4.18` NXP microcode that is [freely available](https://github.com/nxp-qoriq/qoriq-fm-ucode) . As the function's name suggests, this classifier enables comparatively limited functionality of the underlying ASIC, and this microcode version enables comparatively little. In performance terms, this combination was designed for a previous era of Linux networking. A more detailed diff of the available microcode can be found in [arch/dpaa1-architecture](arch/dpaa1-architecture)
 
 ## 2.2 Faster, but old: NXP DPAA1 (NXP ASK)
 

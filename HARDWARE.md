@@ -1,6 +1,6 @@
 # Hardware Overview: Mono Gateway Development Kit
 
-The primary source of truth for the physical hardware is the [Mono development kit hardware description](https://docs.mono.si/gateway-development-kit/hardware-description). This documentation builds on this foundation, and addresses the quirks.
+The primary source of truth for the physical hardware is the [Mono development kit - hardware description](https://docs.mono.si/gateway-development-kit/hardware-description). This documentation builds on this foundation, and addresses the quirks.
 
 # 1. Specification
 
@@ -9,34 +9,34 @@ The primary source of truth for the physical hardware is the [Mono development k
 | **CPU**                        | NXP QorIQ LS1046A SoC: 4x Cortex-A72 @1.6 GHz                                                                                                                                                                                                 |
 | **RAM**                        | 8 GB ECC DDR4 @2100 MT/s                                                                                                                                                                                                                      |
 | **Networking**                 | 2x SFP+ 10 Gbps (10GBASE-R)  <br>3x RJ45 1 Gbps (1000BASE-T)                                                                                                                                                                                  |
-| M.2 expansion==*==             | 1x M.2_1 Key-E (Left) 'Smart home' — interfaces: SDIO, UART, SPI, I2C — Usage: low-bandwidth tri-radio cards (Wifi5, Bluetooth, Thread)<br>1x M.2_2 Key-E (Right) 'Wireless' — interfaces: UART, PCIe 3.0 x1 — Usage: Wifi6 2x2 MU-MIMO cards |
+| **M.2 expansion**==*==         | 1x M.2_1 Key-E (Left) 'Smart home' — interfaces: SDIO, UART, SPI, I2C — Usage: low-bandwidth tri-radio cards (Wifi5, Bluetooth, Thread)<br>1x M.2_2 Key-E (Right) 'Wireless' — interfaces: UART, PCIe 3.0 x1 — Usage: Wifi6 2x2 MU-MIMO cards |
 | **Storage**                    | *User selectable boot source via PCB dip-switch:*<br>1x 64 MB NOR flash for Bootloader<br>1x 32 GB eMMC for Operating System                                                                                                                  |
 | **Firmware**                   | NOR + eMMC (user-updatable) firmware targets available                                                                                                                                                                                        |
 | **Boot loader**                | U-Boot 2025.04 via `booti`                                                                                                                                                                                                                    |
 | **External I/O**               | 1x USB-C 3.1 5 Gbps port, Max 5V 3A<br>1x USB-C UART (serial) Console, 115200 baud (`ttyS0`)                                                                                                                                                  |
 | **Internal I/O**               | 1x 4-pin 5V PWM CPU fan<br>1x 4-pin 5V header (unused)<br>1x Programmable RGBW LED status LED<br>1x JTAG programmer connector<br>100+ PCB test points                                                                                         |
 | **Power supply<br>(external)** | 1x USB-C PD 3.0: 20V 2A (40W), or 15V 3A (45W)                                                                                                                                                                                                |
-> **Note:** As a development kit, additional features are included to enable: 
+> **NOTE:** As a development kit, additional features are included to enable: 
 > OS installation, device recovery, firmware updates, and HW debugging of both the SoC and PCB
 
->==**\*WARNING:** The two m.2 E-key slots have different presented interfaces, and pinouts; compatibility with user-supplied m.2 E-key hardware is not guaranteed, and incorrect use may result in hardware damage. Check data-sheets for your intended m.2 E-key device for interface requirements and pin-compatibility. For a list of tested m.2 devices, and pin-assignments see - [Mono hardware description](https://docs.mono.si/gateway-development-kit/hardware-description#supported-cards)==
+==**\*WARNING:** The two m.2 E-key slots have different presented interfaces and pinouts. Compatibility with user-supplied m.2 E-key hardware is not guaranteed, and incorrect use may result in hardware damage. Check the datasheet for your intended m.2 E-key device for interface requirements and pin-compatibility. For a list of the tested m.2 devices, and full socket pin-assignments see - [Mono hardware description](https://docs.mono.si/gateway-development-kit/hardware-description#supported-cards)==
 
-The Mono Gateway Development Kit is an extremely versatile device, and its design enables user-recovery in an abnormally wide range of scenarios. Even if rendered 'bricked' and unbootable, the device may be recovered via a (separate) JTAG hardware debugger probe.
+The Mono Gateway Development Kit is an extremely versatile device, and its design enables user-recovery in an abnormally wide range of scenarios. Even if rendered *'bricked'* and unbootable, the device still may be recovered via a (separate) JTAG hardware debugger probe ([e.g. TC2050](https://www.tag-connect.com/product/tc2050-idc-050-all)).
 
 ---
 # 2. Boot chain
 
 In order to use this device effectively, some foundational knowledge of how it operates is required, starting with how it effects the initial boot process. 
 
-There is no fixed 'BIOS' as you might find on an x86 computer, as this is an embedded device. The user can however control: the boot source (via a physical dip-switch on the PCB), and after initialisation of the hardware via the U-Boot bootloader, what boots next in the chain.
+There is no fixed 'BIOS' ROM as you might find on an x86 computer, as this is an embedded device. The user can however control the boot source (via a physical dip-switch on the PCB), and after initialisation of the hardware via the U-Boot bootloader, what boots next in the chain.
 
 >**Note:** Use **NOR** as your default boot device, **except when updating the NOR [FIRMWARE.md](FIRMWARE.md)**. This ensures that after installing an OS to the eMMC, your device remains bootable.
 
 ## 2.1 Boot chain: As shipped + OpenWRT + Opnsense
 
-Initially, either the 64 MB NOR flash or the 32 GB eMMC can be used as the primary boot device, as shown below. Each storage device has a separate 'Recovery Linux' and firmware partition in the first 32MB which is used for firmware upgrades, and device recovery. For updating firmware, see [FIRMWARE.md](FIRMWARE.md).
+Initially, either the 64 MB NOR flash, OR the 32 GB eMMC can be used as the primary boot device, as shown below. This works because each storage device has a it's own separate copy of U-Boot, and a small 'Recovery Linux' environment in an initial firmware partition located in the first 32MB of each device. The primary use of the 'Recovery Linux' environment is to perform firmware upgrades, and to device recovery. [FIRMWARE.md](FIRMWARE.md) provides a brief 'how-to' guide for updating the device firmware, and provides critical warnings for avoid common issues.
 
-**The active boot device is controlled via a physical dip-switch on the main PCB.** This defines which storage device used to load U-boot. 
+**The *active* boot device is controlled via a physical dip-switch on the main PCB.** This defines which storage device is used to load U-boot when the system is powered. 
 
 ```mermaid
 flowchart LR
@@ -66,14 +66,14 @@ flowchart LR
     end
 ```
 
->**Note:** The EFI/GRUB path is permanently broken: DPAA1 reserved-memory nodes in the device tree cause GRUB to OOM during `bootefi`. Nobody plans to fix it. `booti` works, costs nothing, and skips GRUB entirely. Sometimes the universe does you a favour. 
+>**Note:** The EFI/GRUB path is permanently broken. DPAA1 (see: [HW-OFFLOADING.md](HW-OFFLOADING.md)) reserved-memory nodes in the device tree cause GRUB to OOM during `bootefi`. Nobody plans to fix it. `booti` works, costs nothing, and skips GRUB entirely. Sometimes the universe does you a favour. 
 
 ## 2.2 Boot chain: for VyOS
 
-After installing Vyos there are three notable changes to the boot chain. 
-1. Booting from eMMC will fail. You must boot from **NOR**. This is now also the only route to access 'Recovery linux', if it is required.
-2. If a VyOS USB is inserted, it boot from it (live mode) before VyOS Installed on eMMC
-3. Reading from `/boot/vyos.env` from eMMC p3 → defines the VyOS named image that is booted
+After installing Vyos there are three notable changes to the boot chain, at present:
+1. Booting from eMMC will fail. You must boot from **NOR**. NOR is now also the only route to access 'Recovery linux', if it is required.
+2. If a VyOS USB is inserted, U-boot will boot from USB (live mode) before attempting to boot VyOS images installed on eMMC
+3. Reading from `/boot/vyos.env` from eMMC p3 (`mmc 0:3`) → defines which named VyOS image is then booted.
 
 ```mermaid
 flowchart LR
@@ -98,7 +98,7 @@ flowchart LR
     end
 ```
 
->**Note:** If installing VyOS onto the eMMC per [INSTALL.md](INSTALL.md) you will (currently) lose the ability to directly boot from eMMC. This is a known [Issue#24](https://github.com/mihakralj/vyos-ls1046a-build/issues/24) for which a fix is known, but not yet deployed. This can be remedied via re-imaging the eMMC, see [FIRMWARE.md](FIRMWARE.md).
+>**Note:** If installing VyOS onto the eMMC per [INSTALL.md](INSTALL.md) you will (currently) lose the ability to directly boot from eMMC. This is a known [issue#24](https://github.com/mihakralj/vyos-ls1046a-build/issues/24) for which a fix is known, but not yet deployed. This can be remedied via re-imaging the eMMC firmware located in the first 32 MB 'reserved' partition on the eMMC. To do so manually, see [FIRMWARE.md](FIRMWARE.md).
 
 ## 2.2.1 Diving deeper
 
