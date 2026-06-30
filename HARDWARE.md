@@ -4,18 +4,18 @@ The primary source of truth for the physical hardware is the [Mono development k
 
 # 1. Specification
 
-|                                |                                                                                                                                                                                                                                               |
-| ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **CPU**                        | NXP QorIQ LS1046A SoC: 4x Cortex-A72 @1.6 GHz                                                                                                                                                                                                 |
-| **RAM**                        | 8 GB ECC DDR4 @2100 MT/s                                                                                                                                                                                                                      |
-| **Networking**                 | 2x SFP+ 10 Gbps (10GBASE-R)  <br>3x RJ45 1 Gbps (1000BASE-T)                                                                                                                                                                                  |
-| **M.2 expansion\***            | 1x M.2_1 Key-E (Left) 'Smart home' — interfaces: SDIO, UART, SPI, I2C — Usage: low-bandwidth tri-radio cards (Wifi5, Bluetooth, Thread)<br>1x M.2_2 Key-E (Right) 'Wireless' — interfaces: UART, PCIe 3.0 x1 — Usage: Wifi6 2x2 MU-MIMO cards |
-| **Storage**                    | *User selectable boot source via PCB dip-switch:*<br>1x 64 MB NOR flash for Bootloader<br>1x 32 GB eMMC for Operating System                                                                                                                  |
-| **Firmware**                   | NOR + eMMC (user-updatable) firmware targets available                                                                                                                                                                                        |
-| **Boot loader**                | U-Boot 2025.04 via `booti`                                                                                                                                                                                                                    |
-| **External I/O**               | 1x USB-C 3.1 5 Gbps port, Max 5V 3A<br>1x USB-C UART (serial) Console, 115200 baud (`ttyS0`)                                                                                                                                                  |
-| **Internal I/O**               | 1x 4-pin 5V PWM CPU fan<br>1x 4-pin 5V header (unused)<br>1x Programmable RGBW LED status LED<br>1x JTAG programmer connector<br>100+ PCB test points                                                                                         |
-| **Power supply<br>(external)** | 1x USB-C PD 3.0: 20V 2A (40W), or 15V 3A (45W)                                                                                                                                                                                                |
+|                                |                                                                                                                                                                                                                                                   |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **CPU**                        | NXP QorIQ LS1046A SoC: 4x Cortex-A72 @1.6 GHz                                                                                                                                                                                                     |
+| **RAM**                        | 8 GB ECC DDR4 @2100 MT/s                                                                                                                                                                                                                          |
+| **Networking**                 | 2x SFP+ 10 Gbps (10GBASE-R)<br>3x RJ45 1 Gbps (1000BASE-T)                                                                                                                                                                                        |
+| **M.2 expansion\***            | 1x M.2_1 Key-E (Left) *'Smart home'* — interfaces: SDIO, UART, SPI, I2C — Usage: low-bandwidth tri-radio cards (Wifi5, Bluetooth, Thread)<br>1x M.2_2 Key-E (Right) *'Wireless'* — interfaces: UART, PCIe 3.0 x1 — Usage: Wifi6 2x2 MU-MIMO cards |
+| **Storage**                    | *User selectable boot source via PCB dip-switch:*<br>1x 64 MB NOR flash for Bootloader<br>1x 32 GB eMMC for Operating System                                                                                                                      |
+| **Firmware**                   | NOR + eMMC (user-updatable) firmware targets available                                                                                                                                                                                            |
+| **Boot loader**                | U-Boot 2025.04 via `booti`                                                                                                                                                                                                                        |
+| **External I/O**               | 1x USB-C 3.1 5 Gbps port, max 5V 3A<br>1x USB-C UART (serial) Console, 115200 baud (`ttyS0`)                                                                                                                                                      |
+| **Internal I/O**               | 1x 4-pin 5V PWM CPU fan<br>1x 4-pin 5V header (unused)<br>1x Programmable RGBW status LED<br>1x JTAG programmer connector<br>100+ PCB test points                                                                                                 |
+| **Power supply<br>(external)** | 1x USB-C PD 3.0: 20V 2A (40W), or 15V 3A (45W)                                                                                                                                                                                                    |
 > **NOTE:** As a development kit, additional features are included to enable: 
 > OS installation, device recovery, firmware updates, and HW debugging of both the SoC and PCB
 
@@ -40,7 +40,7 @@ Initially, either the 64 MB NOR flash, OR the 32 GB eMMC can be used as the prim
 
 ```mermaid
 flowchart LR
-  A(Power On) --> B{dip-switch}
+  A((Power On)) --> B{dip-switch}
   B -->|NOR boot| C{U-BOOT}
   B -->|eMMC boot| D{U-BOOT}
   C -.->|interrupt| E(U-Boot shell)
@@ -52,7 +52,7 @@ flowchart LR
   C -->|Normal boot| P3(eMMC p3)
   D -->|Normal boot| P3(eMMC p3)
     
-  subgraph eMMC ["eMMC (/dev/mmcblk0)"]
+  subgraph EMMC ["eMMC (/dev/mmcblk0)"]
     direction LR
     FWEMMC("Firmware + Recovery Linux")
     P1("p1: boot")
@@ -63,7 +63,23 @@ flowchart LR
   subgraph NOR ["NOR (/dev/mtd0)"]
     direction LR
     FWNOR("Firmware + Recovery Linux")
-    end
+  end
+    
+  style A fill:#222,stroke:#333,color:#fff
+  style B fill:#640,stroke:#333,color:#fff
+  style EFI fill:#a44,stroke:#333,color:#fff
+  style C fill:#48a,stroke:#333,color:#fff
+  style D fill:#48a,stroke:#333,color:#fff
+  style E fill:#48c,stroke:#333,color:#fff
+  style F fill:#48c,stroke:#333,color:#fff
+  style P1 fill:#340,stroke:#333,color:#aaa
+  style P2 fill:#666,stroke:#333,color:#aaa
+  style P3 fill:#4a7,stroke:#333,color:#fff
+  style K fill:#4a9,stroke:#333,color:#fff
+  style FWNOR fill:#963,stroke:#333,color:#fff
+  style FWEMMC fill:#963,stroke:#333,color:#fff
+  style EMMC fill:#ccc,stroke:#333,color:#111
+  style NOR fill:#ccc,stroke:#333,color:#111
 ```
 
 >**NOTE** The EFI/GRUB path is permanently broken. DPAA1 (see: [HW-OFFLOADING.md](HW-OFFLOADING.md)) reserved-memory nodes in the device tree cause GRUB to OOM during `bootefi`. Nobody plans to fix it. `booti` works, costs nothing, and skips GRUB entirely. Sometimes the universe does you a favour. 
@@ -77,14 +93,14 @@ After installing Vyos there are three notable changes to the boot chain, at pres
 
 ```mermaid
 flowchart LR
-  A(Power On) --> B{dip-switch}
+  A((Power On)) --> B{dip-switch}
   B -->|NOR boot| C{U-BOOT}
   B -.->|"❌ eMMC boot"| D(U-BOOT)
   C -.->|interrupt| E(U-Boot shell)
   E -.->|'run recovery'| FWNOR
   C -.->|USB boot| K("Live-boot")
   C -->|Normal boot| P3(eMMC p3)
-    subgraph eMMC ["eMMC (/dev/mmcblk0)"]
+  subgraph EMMC ["eMMC (/dev/mmcblk0)"]
     direction LR
     P3("p3: VYOS")
     FW("Reserved")
@@ -95,7 +111,21 @@ flowchart LR
   subgraph NOR ["NOR (/dev/mtd0)"]
     direction LR
     FWNOR("Firmware + Recovery Linux")
-    end
+  end
+  
+  style A fill:#222,stroke:#333,color:#fff
+  style B fill:#640,stroke:#333,color:#fff
+  style C fill:#48a,stroke:#333,color:#fff
+  style D fill:#a44,stroke:#333,color:#fff
+  style E fill:#48c,stroke:#333,color:#fff
+  style P1 fill:#340,stroke:#333,color:#aaa
+  style P2 fill:#666,stroke:#333,color:#aaa
+  style P3 fill:#4a7,stroke:#333,color:#fff
+  style K fill:#4a9,stroke:#333,color:#fff
+  style FWNOR fill:#963,stroke:#333,color:#fff
+  style EMMC fill:#ccc,stroke:#333,color:#111
+  style NOR fill:#ccc,stroke:#333,color:#111
+  style FW fill:#666,stroke:#333,color:#aaa
 ```
 
 >**NOTE:** If installing VyOS onto the eMMC per [INSTALL.md](INSTALL.md) you will (currently) lose the ability to directly boot from eMMC. This is a known [issue#24](https://github.com/mihakralj/vyos-ls1046a-build/issues/24) for which a fix is known, but not yet deployed. This can be remedied via re-imaging the eMMC firmware located in the first 32 MB 'reserved' partition on the eMMC. To do so manually, see [FIRMWARE.md](FIRMWARE.md).
@@ -131,9 +161,9 @@ block-beta
     eth4["eth4\nSFP+\n10GBase-R"]
   end
 
-  style eth0 fill:#4a9,stroke:#333,color:#fff
-  style eth1 fill:#4a9,stroke:#333,color:#fff
-  style eth2 fill:#4a9,stroke:#333,color:#fff
+  style eth0 fill:#4a7,stroke:#333,color:#fff
+  style eth1 fill:#4a7,stroke:#333,color:#fff
+  style eth2 fill:#4a7,stroke:#333,color:#fff
   style eth3 fill:#49a,stroke:#333,color:#fff
   style eth4 fill:#49a,stroke:#333,color:#fff
 ```
@@ -169,8 +199,18 @@ flowchart TB
   L3 --- S1
   L4 --- S2
 
-  style LDEV fill:#2ae,stroke:#333,color:#111
-  style PDEV fill:#2ea,stroke:#333,color:#fff
+  style LDEV fill:#48a,stroke:#333,color:#fff
+  style PDEV fill:#963,stroke:#333,color:#fff
+  style L1 fill:#640,stroke:#333,color:#fff
+  style L2 fill:#640,stroke:#333,color:#fff
+  style L0 fill:#640,stroke:#333,color:#fff
+  style L3 fill:#668,stroke:#333,color:#fff
+  style L4 fill:#668,stroke:#333,color:#fff  
+  style G0 fill:#4a7,stroke:#333,color:#fff
+  style G1 fill:#4a7,stroke:#333,color:#fff
+  style G2 fill:#4a7,stroke:#333,color:#fff
+  style S1 fill:#49a,stroke:#333,color:#fff
+  style S2 fill:#49a,stroke:#333,color:#fff
 ```
 
 This quirk does divide options, but it remains a more consist default, and can be readily addressed post-boot in your OS of choice (see §3.3 below). 
@@ -199,9 +239,9 @@ block-beta
     eth4["eth4\nSFP+\n10GBase-R"]
   end
 
-  style eth0 fill:#4a9,stroke:#333,color:#fff
-  style eth1 fill:#4a9,stroke:#333,color:#fff
-  style eth2 fill:#4a9,stroke:#333,color:#fff
+  style eth0 fill:#4a7,stroke:#333,color:#fff
+  style eth1 fill:#4a7,stroke:#333,color:#fff
+  style eth2 fill:#4a7,stroke:#333,color:#fff
   style eth3 fill:#49a,stroke:#333,color:#fff
   style eth4 fill:#49a,stroke:#333,color:#fff
 ```
@@ -211,10 +251,35 @@ The only notable anomaly this introduces is the order in which interfaces are pr
 
 ---
 
-# 4. CPU SERDES lanes, and SFP+ Port Signalling
+# 4. Hardware design details
 
-# 4.1 Overview: CPU-Device Signalling requirements
+In addition to the headline specification outlined in §1, many further HW design details have been discovered, which may provide a useful reference. in during troubleshooting, understanding the device operations, and the practical limitations of this excellent hardware.
 
-# 4.2 SERDES configuration in Mono Gateway Development Kit
+**Includes:**
+- Component IC details and spec sheets (where available)
+- Enumeration of the I2C buses, SPI, UARTs, GPIO and associated MUXs
+- Design-time configurational choices for the LS1046A SoC
+- Known limitations
+- SPF+ module compatibility list
 
-# 4.3 Known limitations + workarounds
+## 4.1 Additional hardware specifications
+
+### 4.1.1 Identified IC components
+\<IC part numbers, HW adddress etc\>
+### 4.1.2 Enumerated communication buses
+\<Map I2C buses and devices here\>
+## 4.2 LS1046A SoC configuration
+
+### 4.2.1 Overview: CPU-Device Signalling requirements
+\<CPU-device signalling 101\>
+### 4.2.2 Role of the Reset Code Word (RCW)
+\<Purpose, impact on SoC I/O\>
+
+### 4.2.3 SERDES configuration in Mono Gateway Development Kit
+\<Map SerDes lanes to devices/functions\>
+
+## 4.3 Known limitations + workarounds
+\<1/10G SFP retimer clock; No HG SGMII etc\>
+
+## 4.4 SFP+ module compatibility list
+\<Best efforts collation of all user-testing\>
