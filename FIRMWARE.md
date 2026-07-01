@@ -8,18 +8,14 @@ The primary source of truth for the Mono firmware is the [Mono gateway developme
 
 >**WARNING:** Failure to follow this guidance may result in the soft *'bricking'* of your device. Recovery from a *'bricked'* state requires either: additional hardware like a JTAG programmer, OR returning the device to Mono to rebuild. To avoid a bad outcome - **follow these two rules!**
 
-
 ---
-
-
 ## 1. Overview
 
 Updating the firmware of your Mono Gateway Development Kit is ***not*** essential.
 
 However, updating your firmware provide the significant benefits of Mono's continued firmware development. This provides: useful helper tools, functionality, bug-fixes, polish, and suppresses the verbose `INFO` logging seen at boot on the shipped firmware. For highlights - see: [§1.1](#11-Major-firmware-changes) 
 
-The majority of the Mono firmware code is available and may be explored in the associated [meta-mono](https://github.com/we-are-mono/meta-mono/tree/master) repo, but excludes the (licensed NXP-proprietary) microcode injected at build-time. Final Mono firmware releases are available separately at [firmware.mono.si](https://firmware.mono.si/). For access - see:
-
+The majority of the Mono firmware code is available and may be explored in the associated [meta-mono](https://github.com/we-are-mono/meta-mono/tree/master) repo, but excludes the (licensed NXP-proprietary) microcode injected at build-time. Final Mono firmware releases are available separately at [firmware.mono.si](https://firmware.mono.si/), see: [§2.4.4](#244-offline-update-requirements)
 
 ## 1.1 Major firmware changes
 
@@ -36,9 +32,7 @@ For the full detailed changelog see: [we-are-mono/CHANGELOG.md](https://github.c
 - Adds: [Firmware signing](https://github.com/we-are-mono/meta-mono/blob/master/CHANGELOG.md#2026-03-30--add-optional-ecdsa-p-256-signing-for-firmware-images); [USB mass storage](https://github.com/we-are-mono/meta-mono/blob/master/CHANGELOG.md#2026-04-15--add-usb-storage-support-gpio-poweroff-and-fix-regressions); [IPv6 DNS](https://github.com/we-are-mono/meta-mono/blob/master/CHANGELOG.md#2026-06-13--security-review-follow-ups-supply-chain-pinning-cve-scanning)[vim-tiny + coloured PS1](https://github.com/we-are-mono/meta-mono/blob/master/CHANGELOG.md#2026-06-13--recovery-ux-polish-colored-prompt-vim-tiny-firmware-tool-output)
 - Fixes: [Fix eMMC recovery](https://github.com/we-are-mono/meta-mono/blob/master/CHANGELOG.md#2026-03-28--split-u-boot-environment-for-qspi-and-emmc-boot-media); [Fix LED](https://github.com/we-are-mono/meta-mono/blob/master/CHANGELOG.md#2026-02-06--fix-package-name-collision-for-debapt-backends-5); [Fix FAT32 USB](https://github.com/we-are-mono/meta-mono/blob/master/CHANGELOG.md#2026-04-18--add-usb-firmware-update-path); [Fix RTC](https://github.com/we-are-mono/meta-mono/blob/master/CHANGELOG.md#2026-04-11--harden-firmware-security-fix-rtc-improve-build-quality)
 
-
 ---
-
 
 # 2. Preparation
 
@@ -48,17 +42,15 @@ This chapter section covers what will need, and what you need to know.
 
 The **next** chapter provides a walk-through of the update process itself.
 
-
 ## 2.1 Physical preparation
 
 All methods to perform firmware updates will require access to the dip-switch on the main PCB. To access this, first remove the 4x T10 Torx screws and gently remove the clear plastic lid. For a visual guide see: [Mono's disassembly instructions](https://docs.mono.si/gateway-development-kit/hardware-description#disassembly-instructions)
-
 
 ## 2.2 Firmware release files
 
 The firmware files available in each release from [firmware.mono.si](https://firmware.mono.si/) are listed below, along with their intended usage.
 
->**NOTE:** Depending on how you intend to update your firmware (see: [§2.3](#23-firmware-preparation)), you may never interact with these files directly.
+>**NOTE:** Depending on how you intend to update your firmware (see: [§2.4](#24-firmware-update-requirements)), you may never interact with these files directly.
 
 ```bash
 firmware-emmc-gateway-dk.bin		# 'eMMC' eSDHC firmware
@@ -71,7 +63,6 @@ uboot-qspi-gateway-dk.env			# Default 'NOR' U-Boot environment variables
 ```
 
 >**NOTE:** Firmware is now signed using the Mono ECDSA P-256 private key, and validated against the provided public key to validate the authenticity during the integrity-check of the `*.bin` firmware images.
-
 
 ### 2.2.1 Firmware structure
 
@@ -92,18 +83,16 @@ Firmware is not monolithic, and it is helpful to understanding both what is 'in'
 - mtd3: Unlocks the HW-offloading capabilities of the LS1046A SoC, see: [HW-OFFLOADING.md](HW-OFFLOADING.md)
 - mtd4-6: Provide the 'Recovery Linux' ramfs environment
 
-
 ## 2.3 (All methods) Common requirements
 
 **Have:**
 - 1x USB-C cable (for serial console)
 - 1x ethernet cable (to connect to an existing network / router / ISP gateway)
-- (If required) Backed-up U-boot environment variables, see - §2.4.1
-
+- (If required) Backed-up U-boot environment variables, see - [§2.4.1](#241-u-boot-environment-variables)
 
 **Know:**
-- How to get into the 'Recovery Linux' environment, see - §2.3.2 or [getting started](https://docs.mono.si/gateway-development-kit/getting-started#first-boot)).
-- How to use the serial console, see - §2.3.3 or [getting started](https://docs.mono.si/gateway-development-kit/getting-started#first-boot)).
+- How to get into the 'Recovery Linux' environment, see - [§2.3.2](#232-recovery-linux-101) or [getting started](https://docs.mono.si/gateway-development-kit/getting-started#first-boot)).
+- How to use the serial console, see - [§2.3.3](#233-serial-console-101) or [getting started](https://docs.mono.si/gateway-development-kit/getting-started#first-boot)).
 - Which port/interface you plugged the ethernet cable into - see [HARDWARE.md](HARDWARE.md#31-as-shipped-with-cosmetic-correction-applied)
 - How the boot process works - see [HARDWARE.md](HARDWARE.md#2-boot-chain)
 - The private IP range used by your local connected network (e.g. IPv4 192.168.0.0/24, or 10.0.0.0/24 etc)
@@ -111,10 +100,9 @@ Firmware is not monolithic, and it is helpful to understanding both what is 'in'
 - Your DNS server IP (only if different to your existing router e.g. a PiHole or simila, see - §2.3.4)
 - How to debug network issues from the Linux CLI with `ip`, `ping` & `nslookup`
 
-
 ### 2.3.2 'Recovery Linux' 101
 
-This is the small read-only linux environment that exists to enable firmware updates, and device recovery. It is part of the firmware image, as shown in §2.2.1
+This is the small read-only linux environment that exists to enable firmware updates, and device recovery. It is part of the firmware image, as shown in [§2.2.1](#221-firmware-structure)
 
 **To access the 'Recovery Linux':**
 1) Power on
@@ -122,7 +110,6 @@ This is the small read-only linux environment that exists to enable firmware upd
 3) Press any key to interrupt boot
 4) Type `run recovery` + press `Enter` 
 5) Login as `root` (no password)
-
 
 ### 2.3.3 Serial console 101
 
@@ -135,7 +122,6 @@ ls /dev/ttyUSB*				# Find the right ttyUSB device, usually /dev/ttyUSB0
 
 tio /dev/ttyUSB0			# Opens the required serial port 
 ```
-
 
 ### 2.3.4 Custom DNS 101
 
@@ -154,7 +140,6 @@ echo 'nameserver 192.168.1.254 pihole' >> /etc/resolv.conf		# Adds pihole DNS
 cat /etc/resolv.conf	# Check your addition is consistently formatted
 ```
 
-
 ## 2.4 Firmware update requirements
 
 There are four\* main methods to update the firmware of the Mono Gateway Development Kit:
@@ -172,7 +157,6 @@ There are four\* main methods to update the firmware of the Mono Gateway Develop
 This section will cover pre-requisites and requirements for each method. 
 
 >\***NOTE:** Semi-hosting via JTAG debugger provides a further option of last resort which is also used to enable the recovery **'bricked'** (unbootable) devices. This is out of scope for this guide. If required, see other community resources: e.g. [moshevds/mono-gateway-uart-recovery](https://github.com/moshevds/mono-gateway-uart-recovery/tree/main) or seek help via the [Mono Discord](https://discord.com/invite/FGHJ3J5v5W). 
-
 
 ### 2.4.1 U-Boot environment variables
 
@@ -201,7 +185,6 @@ There are two methods to save/retain the U-boot environment variables:
 ```bash
 firmware update --preserve-env			# Update firmware; retain U-Boot env vars
 ```
-
 
 ### 2.4.2 'Legacy' update requirements
 
@@ -234,7 +217,6 @@ You may note the `dd` command passes several additional arguments. These can be 
 ```
 In short, the `dd` command skips reading and writing to the first offset position. This is because the *'Reset codeword (RCW)+ BL2 bootloader'* located at the mtd0/0MB offset which remains unchanged between firmware versions. The RCW configuration is fixed by the physical PCB design.
 
-
 ### 2.4.3 'Normal' Update requirements 
 
 >**NOTE:** **When available - this is the (current) recommended route.**
@@ -242,7 +224,6 @@ In short, the `dd` command skips reading and writing to the first offset positio
 By default, Mono Gateway Development Kit firmware updates are performed using the `firmware` helper application. This downloads, authenticates and verifies the prior to applying the firmware update. 
 
 No further preparation required - Move onto §3 to update your firmware.
-
 
 ### 2.4.4 'Offline' update requirements
 
@@ -272,10 +253,7 @@ Firmware can also staged on a local web server, and retrieved via the same `curl
 
 With the firmware staged, move onto §3 to update your firmware.
 
-
 ---
-
-
 # 3. The firmware update process
 
 \*\*\* WARNING: ONLY UPDATE THE FIRMWARE ON ONE STORAGE DEVICE AT A TIME\ *\*\*
@@ -297,7 +275,6 @@ Executing the firmware update process branches here.
 
 - Using `Mono-imager` see §3.4
 
-
 # 3.1 'Legacy' method
 
 >**NOTE: If you have not updated firmware before you MUST start here**
@@ -305,7 +282,6 @@ Executing the firmware update process branches here.
 **Before you start: - READ: §2!** 
 
 Ensure you have all the information you will need to complete this process.
-
 
 ### START
 
@@ -428,13 +404,11 @@ If you get no output, go back to step STEP #11 and retry.
 
 ---
 
-
 ## 3.2 'Normal' method (using `firmware` helper)
 
 **Before you start: - READ: §2!** 
 
 Ensure you have all the information you will need to complete the process.
-
 
 ### START
 
@@ -551,7 +525,6 @@ If you get no output, go back to step STEP #11 and retry.
 
 ---
 
-
 # 3.3 'Offline' method
 
 **Before you start: - READ: §2!** 
@@ -574,16 +547,15 @@ firmware update --from PATH
 ```
 
 
-
 # 3.4 Using `Mono imager`
 
 This is the newest of the firmware update methods and aims to provide a streamlined, scripted, firmware update and OS installation process.
 
 Full documentation for using `mono-imager` can be found in at [mono-imager](https://github.com/HAHermsen/mono-imager) GitHub repo.
 
-
 # 3.5 Troubleshooting
 
+Some basic troubleshooting tips.
 
 ### 3.5.1 If ping fails
 
@@ -596,7 +568,6 @@ ip a show						# prints interface IPs, MACs, link state
 If your configured interface, e.g. `eth1` shows `no-carrier` - you've have likely configured another interface by mistake, and not the one with the network cable. For why this happened, see: [HARDWARE.md](HARDWARE.md#31-as-shipped-with-cosmetic-correction-applied). Fix by moving the cable to the correct interface, at which point the `no-carrier` next to your configured interface will no longer be observed in the output of `ip a show`.
 
 2) Check any upstream firewall is not blocking/dropping traffic - if so, configure it accordingly.
-
 
 ## 3.5.2 If nslookup fails:
 
