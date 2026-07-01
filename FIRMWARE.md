@@ -34,7 +34,7 @@ For the full detailed changelog see: [we-are-mono/CHANGELOG.md](https://github.c
 
 ---
 
-# 2. Preparation
+# 2. Requirements
 
 Before updating the firmware - Read this chapter carefully.
 
@@ -231,15 +231,13 @@ No further preparation required - Move onto §3 to update your firmware.
 
 To prepare to perform an *'offline'* firmware update, you must: 
 
-
 	**A) Obtain the firmware release files** 
 
 Mono firmware can be obtained from [firmware.mono.si](https://firmware.mono.si/), using username: `mono`, and utilising a MAC address of from your device, in the form `xx:xx:xx:xx:xx:xx` as the password. 
 
 >**NOTE:** MAC addresses are noted on a physical sticker on the base of the unit, or can be found via use of the `ip address show` command within the 'Recovery Linux' environment.
 
-
-	**B) Stage firmware in an accessible location**
+	**B) Stage firmware files in an accessible location**
 
 >**NOTE:** On the 'as-shipped' shipped firmware, known bugs will frustrate the use of USB drives. 
 
@@ -265,21 +263,23 @@ With the firmware staged, move onto §3 to update your firmware.
 
 Executing the firmware update process branches here. 
 
-**If performing the update for the first time, you MUST use the 'Legacy' method, - see §3.1**
+### Update methods
 
-**General update process:**
+- ***'Legacy'*** method, see: [§3.1](#31-legacy-method)
 
-- ***'Normal'*** - see §3.2
+>**NOTE:** If performing the update for the first time, you MUST use the 'Legacy' method
 
-- ***'Offline'*** - see §3.3
+- ***'Normal'*** method, see: [§3.2](#32-normal-method-using-firmware-helper)
 
-- Using `Mono-imager` see §3.4
+- ***'Offline'*** method, see: [§3.3](#33-offline-method)
+
+- Using `Mono-imager`, see: [§3.4]()
 
 ## 3.1 'Legacy' method
 
 >**NOTE: If you have not updated firmware before you MUST start here**
 
-**Before you start: - READ: §2!** 
+**Before you start: - READ: [§2 Requirements!](#2-requirements)**
 
 Ensure you have all the information you will need to complete this process.
 
@@ -338,7 +338,7 @@ curl -ku mono:XX:XX:XX:XX:XX:XX -O https://firmware.mono.si/firmware-emmc-gatewa
 
 >**STEP #10** Flash the eMMC firmware
 
->\*\***WARNING: If you have installed an OS (OPNsense, OpenWRT, VyOS) that you want to keep, ensure you have backed-up your U-boot environment variables before proceeding. The next operation will reset these, and may render your existing OS unbootable**\*\*
+>\*\* **WARNING: If you have installed an OS (OPNsense, OpenWRT, VyOS) that you want to keep, ensure you have backed-up your U-boot environment variables before proceeding. The next operation will reset these, and may render your existing OS unbootable** \*\*
 
 ```bash
 dd if=firmware-emmc-gateway-dk.bin of=/dev/mmcblk0 bs=4096 skip=1 seek=1 
@@ -372,11 +372,15 @@ If it boots - eMMC flashed successfully, and you are 50% done. If you get no out
 
 >**STEP #15** You can now use the new `firmware` helper to flash NOR
 
+>\*\* **WARNING: If you have installed an OS (OPNsense, OpenWRT, VyOS) that you want to keep, ensure you have backed-up your U-boot environment variables before proceeding. The next operation will reset these, and may render your existing OS unbootable** \*\*
+
 ```bash
-firmware update
+firmware update					# Update firmware; restore default U-Boot env vars
+
+firmware update --preserve-env	# Update firmware; preserve U-Boot env vars
 
 # Follow the prompts, and wait for the process to complete.
-```
+``````
 
 \*\*\* DO NOT INTERRUPT THE PROCESS ONCE STARTED \*\*\*
 
@@ -406,7 +410,7 @@ If you get no output, go back to step STEP #11 and retry.
 
 ## 3.2 'Normal' method (using `firmware` helper)
 
-**Before you start: - READ: §2!** 
+**Before you start: - READ: [§2 Requirements](#2-requirements)**
 
 Ensure you have all the information you will need to complete the process.
 
@@ -459,11 +463,16 @@ nslookup google.com										# Tests DNS lookup
 
 >**STEP #9** Use the `firmware` helper to flash eMMC
 
+\*\* **WARNING: If you have installed an OS (OPNsense, OpenWRT, VyOS) that you want to keep, ensure you have backed-up your U-boot environment variables before proceeding. The next operation will reset these, and may render your existing OS unbootable** \*\*
+
 ```bash
-firmware update
+firmware update					# Update firmware; restore default U-Boot env vars
+
+firmware update --preserve-env	# Update firmware; preserve U-Boot env vars
 
 # Follow the prompts, and wait for the process to complete.
 ```
+
 
 ---
 
@@ -494,7 +503,9 @@ If it boots - eMMC flashed successfully, and you are 50% done. If you get no out
 >**STEP #14** You can now use the new `firmware` helper to flash NOR
 
 ```bash
-firmware update
+firmware update					# Update firmware; restore default U-Boot env vars
+
+firmware update --preserve-env	# Update firmware; preserve U-Boot env vars
 
 # Follow the prompts, and wait for the process to complete.
 ```
