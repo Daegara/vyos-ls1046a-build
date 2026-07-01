@@ -24,26 +24,26 @@ This is a big topic, best approached by first visualising the outcome, as below.
 ```mermaid
 flowchart TB
   subgraph CORES ["4× Cortex-A72 Cores"]
-    C0["Core 0"] & C1["Core 1"] & C2["Core 2"] & C3["Core 3"]
+    C0("Core 0") & C1("Core 1") & C2("Core 2") & C3("Core 3")
   end
 
   subgraph PORTALS ["HW Portals (1 per core)"]
-    BP["BMan"] & QP["QMan"]
+    BP("BMan") & QP("QMan")
   end
 
   subgraph FMAN ["FMan"]
     direction LR
-    M0["MEMAC 4\neth0 SGMII"]
-    M1["MEMAC 5\neth1 SGMII"]
-    M2["MEMAC 1\neth2 SGMII"]
-    M3["MEMAC 9\neth3 10G"]
-    M4["MEMAC 10\neth4 10G"]
+    M0("MEMAC 4\neth0 SGMII")
+    M1("MEMAC 5\neth1 SGMII")
+    M2("MEMAC 1\neth2 SGMII")
+    M3("MEMAC 9\neth3 10G")
+    M4("MEMAC 10\neth4 10G")
   end
 
   subgraph PHY ["PHY Layer"]
     direction LR
-    G0["GPY115C\nMDIO :00"] & G1["GPY115C\nMDIO :01"] & G2["GPY115C\nMDIO :02"]
-    S1["SFP+\nfixed-link"] & S2["SFP+\nfixed-link"]
+    G0("GPY115C\nMDIO :00") & G1("GPY115C\nMDIO :01") & G2("GPY115C\nMDIO :02")
+    S1("SFP+\nfixed-link") & S2("SFP+\nfixed-link")
   end
   
   subgraph ASIC ["I/O ASIC"]
@@ -57,9 +57,28 @@ flowchart TB
   
   CORES <-->|"dequeue/enqueue"| PORTALS
   
-  style FMAN fill:#2a6,stroke:#333,color:#fff
-  style PORTALS fill:#48a,stroke:#333,color:#fff
-  style ASIC fill:#bbb,stroke:#333,color:#111
+  style ASIC fill:#ccc,stroke:#333,color:#111
+  style PORTALS fill:#4a7,stroke:#333,color:#fff
+  style BP fill:#668,stroke:#333,color:#fff
+  style QP fill:#668,stroke:#333,color:#fff 
+  style FMAN fill:#4a7,stroke:#333,color:#fff
+  style M0 fill:#640,stroke:#333,color:#fff
+  style M1 fill:#640,stroke:#333,color:#fff
+  style M2 fill:#640,stroke:#333,color:#fff
+  style M3 fill:#640,stroke:#333,color:#fff
+  style M4 fill:#640,stroke:#333,color:#fff
+  style PHY fill:#963,stroke:#333,color:#fff
+  style G0 fill:#48a,stroke:#333,color:#fff
+  style G1 fill:#48a,stroke:#333,color:#fff
+  style G2 fill:#48a,stroke:#333,color:#fff
+  style S1 fill:#48a,stroke:#333,color:#fff
+  style S2 fill:#48a,stroke:#333,color:#fff
+  style CORES fill:#ccc,stroke:#333,color:#111
+  style C0 fill:#963,stroke:#333,color:#fff
+  style C1 fill:#963,stroke:#333,color:#fff
+  style C2 fill:#963,stroke:#333,color:#fff
+  style C3 fill:#963,stroke:#333,color:#fff
+
 ```
 A visual overview of DPAA1 of the LS1064A SoC in the Mono Gateway development kit. 
 
