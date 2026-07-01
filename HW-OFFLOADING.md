@@ -42,8 +42,7 @@ flowchart TB
 
   subgraph PHY ["PHY Layer"]
     direction LR
-    G0("GPY115C\nMDIO :00") & G1("GPY115C\nMDIO :01") & G2("GPY115C\nMDIO :02")
-    S1("SFP+\nfixed-link") & S2("SFP+\nfixed-link")
+    G0("GPY115C\nMDIO :00") & G1("GPY115C\nMDIO :01") & G2("GPY115C\nMDIO :02") & S1("SFP+\nfixed-link") & S2("SFP+\nfixed-link")
   end
 
   subgraph ASIC ["I/O ASIC"]
@@ -56,7 +55,7 @@ flowchart TB
   M3 --- S1
   M4 --- S2
   CORES <-->|"dequeue/enqueue"| PORTALS
-
+  
   style FMAN fill:#4a7,stroke:#333,color:#fff
   style M0 fill:#640,stroke:#333,color:#fff
   style M1 fill:#640,stroke:#333,color:#fff
@@ -72,12 +71,12 @@ flowchart TB
   style G2 fill:#48a,stroke:#333,color:#fff
   style S1 fill:#48a,stroke:#333,color:#fff
   style S2 fill:#48a,stroke:#333,color:#fff
-  style CORES fill:#ccc,stroke:#333,color:#111
+  style CORES fill:#aaa,stroke:#333,color:#111
   style C0 fill:#963,stroke:#333,color:#fff
   style C1 fill:#963,stroke:#333,color:#fff
   style C2 fill:#963,stroke:#333,color:#fff
   style C3 fill:#963,stroke:#333,color:#fff
-  style ASIC fill:#ccc,stroke:#333,color:#111
+  style ASIC fill:#aaa,stroke:#333,color:#111
 ```
 A visual overview of DPAA1 of the LS1064A SoC in the Mono Gateway development kit. 
 

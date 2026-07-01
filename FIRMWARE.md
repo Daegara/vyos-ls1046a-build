@@ -2,7 +2,9 @@
 
 The primary source of truth for the Mono firmware is the [Mono gateway development kit - flashing-firmware](https://docs.mono.si/gateway-development-kit/flashing-firmware). This documentation builds on this foundation, and addresses the quirks.
 
-<p style="color: red;"><strong>*** <u>WARNING: ONLY UPDATE THE FIRMWARE ON ONE STORAGE DEVICE AT A TIME</u>***</strong></p><p style="color: red;"><strong>*** <u>WARNING: NEVER UPDATE THE DEVICE YOU USED TO BOOT</u> ***</strong></p>
+\*\*\*WARNING: ONLY UPDATE THE FIRMWARE ON ONE STORAGE DEVICE AT A TIME\*\*\*
+
+\*\*\*WARNING: NEVER UPDATE THE DEVICE YOU USED TO BOOT\*\*\*
 
 >**WARNING:** Failure to follow this guidance may result in the soft *'bricking'* of your device. Recovery from a *'bricked'* state requires either: additional hardware like a JTAG programmer, OR returning the device to Mono to rebuild. To avoid a bad outcome - **follow these two rules!**
 
@@ -76,6 +78,7 @@ Firmware is not monolithic, and it is helpful to understanding both what is 'in'
 | mtd4  | 5           | 0x000000    | Device tree (Recovery)               | RO    |
 | mtd5  | 6           | 0x000000    | Backup/reserved                      | RO    |
 | mtd6  | 10          | 0x000000    | Kernel+initramfs (Recovery)          | RO    |
+
 **Succinctly:** 
 mtd0-2: Configures, initialises and boots the hardware
 mtd3: Unlocks the HW-offloading capabilities of the LS1046A SoC, see: [HW-OFFLOADING.md](HW-OFFLOADING.md)
@@ -160,7 +163,7 @@ This section will cover pre-requisites and requirements for each method.
 
 These are located within the 'firmware' at the 3 MB offset, and are what directs U-Boot what OS to load after the hardware is initialised, and initial boot self-tests have completed.
 
->\*\***WARNING: If you have installed an OS (OPNsense, OpenWRT, VyOS) that you want to keep, ensure you have backed-up your U-boot environment variables before proceeding. By default, the firmware update process will reset these to default. This may leave you unable to boot into a previous installed OS\*\*
+>**WARNING: If you have installed an OS (OPNsense, OpenWRT, VyOS) that you want to keep, ensure you have backed-up your U-boot environment variables before proceeding. By default, the firmware update process will reset these to default. This may leave you unable to boot into a previous installed OS**
 
 >NOTE: If you are updating firmware, AND intend to re-install your OS, OR install a new one, you do not need to save these variables.
 
@@ -170,14 +173,14 @@ There are two methods to save/retain the U-boot environment variables:
 
 >**NOTE:** If updating firmware for the 1st time and/or using the 'legacy' method, this is your only option
 
-i) Power on
-ii) Interrupt boot to drop into the U-boot prompt
-iii) Enter `pri` + hit return
-iv) Select and copy the output to a text editor
-v) Complete the firmware update process
-vi) Return to U-boot prompt, type `setenv` + return
-vii) Paste the variables form your text editor
-viii) Save by typing `saveenv` + return
+1) Power on
+2) Interrupt boot to drop into the U-boot prompt
+3) Enter `pri` + hit return
+4) Select and copy the output to a text editor
+5) Complete the firmware update process
+6) Return to U-boot prompt, type `setenv` + return
+7) Paste the variables form your text editor
+8) Save by typing `saveenv` + return
 
 **B) Use the --preserve-env flag with the `firmware` helper using the 'Normal' method**
 ```bash
@@ -255,7 +258,11 @@ With the firmware staged, move onto §3 to update your firmware.
 
 # 3. The firmware update process
 
-<p style="color: red;"><strong>*** <u>WARNING: ONLY UPDATE THE FIRMWARE ON ONE STORAGE DEVICE AT A TIME</u>***</strong></p><p style="color: red;"><strong>*** <u>WARNING: NEVER UPDATE THE DEVICE YOU USED TO BOOT</u> ***</strong></p>
+\*\*\*WARNING: ONLY UPDATE THE FIRMWARE ON ONE STORAGE DEVICE AT A TIME\*\*\*
+
+\*\*\*WARNING: NEVER UPDATE THE DEVICE YOU USED TO BOOT\*\*\*
+
+
 >**WARNING:** Failure to follow this guidance may result in the soft *'bricking'* of your device. Recovery from a *'bricked'* state requires either: additional hardware like a JTAG programmer, OR returning the device to Mono to rebuild. To avoid a bad outcome - **follow these two rules!
 
 Executing the firmware update process branches here. 
@@ -263,9 +270,12 @@ Executing the firmware update process branches here.
 **If performing the update for the first time, you MUST use the 'Legacy' method, - see §3.1**
 
 **General update process:**
-***'Normal'*** - see §3.2
-***'Offline'*** - see §3.3
-Using `Mono-imager` see §3.4
+
+- ***'Normal'*** - see §3.2
+
+- ***'Offline'*** - see §3.3
+
+- Using `Mono-imager` see §3.4
 
 # 3.1 'Legacy' method
 
@@ -364,12 +374,13 @@ If it boots - eMMC flashed successfully, and you are 50% done. If you get no out
 
 >**STEP #15** You can now use the new `firmware` helper to flash NOR
 
-```
+```bash
 firmware update
+
+# Follow the prompts, and wait for the process to complete.
 ```
 
-Follow the prompts, and wait for the process to complete.
-<p style="color: red;"><strong>***<u>DO NOT INTERRUPT THE PROCESS ONCE STARTED</u>***</strong></p>
+\*\*\* DO NOT INTERRUPT THE PROCESS ONCE STARTED \*\*\*
 
 ---
 
@@ -430,8 +441,9 @@ Ensure you have all the information you will need to complete the process.
 
 >**STEP #7** Using the commands outlined in 2.3.2 enable the interface you have used to connect the Mono Gateway development kit, define an IP address, and default route.
 
-EXAMPLE: To config up eth1, with an IP of 10.0.0.200 with the 10.0.0.0/24 network, with your (existing router) at 10.0.0.1:
 ```bash
+# EXAMPLE: To config up eth1, with an IP of 10.0.0.200 with the 10.0.0.0/24 network, with your (existing router) at 10.0.0.1:
+
 ip link set up eth1										# set eth1 admin up
 ip address add 10.0.0.200/24 dev eth1					# add IP for eth1
 ip route add default via 10.0.0.1 dev eth1				# add route via eth1
@@ -449,11 +461,11 @@ nslookup google.com										# Tests DNS lookup
 
 >**STEP #9** Use the `firmware` helper to flash eMMC
 
-```
+```bash
 firmware update
-```
 
-Follow the prompts, and wait for the process to complete.
+# Follow the prompts, and wait for the process to complete.
+```
 
 ---
 
@@ -483,12 +495,13 @@ If it boots - eMMC flashed successfully, and you are 50% done. If you get no out
 
 >**STEP #14** You can now use the new `firmware` helper to flash NOR
 
-```
+```bash
 firmware update
+
+# Follow the prompts, and wait for the process to complete.
 ```
 
-Follow the prompts, and wait for the process to complete.
-<p style="color: red;"><strong>***<u>DO NOT INTERRUPT THE PROCESS ONCE STARTED</u>***</strong></p>
+\*\*\* DO NOT INTERRUPT THE PROCESS ONCE STARTED \*\*\*
 
 ---
 
@@ -535,16 +548,19 @@ firmware update --url URL
 firmware update --from PATH
 ```
 
+---
 
-## 3.3 Using `Mono imager`
+# 3.4 Using `Mono imager`
 
 This is the newest of the firmware update methods and aims to provide a streamlined, scripted, firmware update and OS installation process.
 
 Full documentation for using `mono-imager` can be found in at [mono-imager](https://github.com/HAHermsen/mono-imager) GitHub repo.
 
-# 3.4 Troubleshooting
+---
 
-### 3.4.1 If ping fails
+# 3.5 Troubleshooting
+
+### 3.5.1 If ping fails
 
 1) Check your network cable is actually in eth1... 
 
@@ -556,7 +572,7 @@ If your configured interface, e.g. `eth1` shows `no-carrier` - you've have likel
 
 2) Check any upstream firewall is not blocking/dropping traffic - if so, configure it accordingly.
 
-## 3.4.2 If nslookup fails:
+## 3.5.2 If nslookup fails:
 
 1) Ensure you have a working, accessible DNS server defined in `/etc/resolv.conf` and retry. For how to modify the local DNS configuration, see: §2.3.4
 
