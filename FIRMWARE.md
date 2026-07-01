@@ -13,7 +13,7 @@ The primary source of truth for the Mono firmware is the [Mono gateway developme
 
 Updating the firmware of your Mono Gateway Development Kit is ***not*** essential.
 
-However, updating your firmware provide the significant benefits of Mono's continued firmware development. This provides: useful helper tools, functionality, bug-fixes, polish, and suppresses the verbose `INFO` logging seen at boot on the shipped firmware. For highlights - see: [§1.1](#11-Major-firmware-changes) 
+However, updating your firmware provide the significant benefits of Mono's continued firmware development. This provides: useful helper tools, functionality, bug-fixes, polish, and suppresses the verbose `INFO` logging seen at boot on the shipped firmware. For highlights, see: [§1.1](#11-Major-firmware-changes) 
 
 The majority of the Mono firmware code is available and may be explored in the associated [meta-mono](https://github.com/we-are-mono/meta-mono/tree/master) repo, but excludes the (licensed NXP-proprietary) microcode injected at build-time. Final Mono firmware releases are available separately at [firmware.mono.si](https://firmware.mono.si/), see: [§2.4.4](#244-offline-update-requirements)
 
@@ -91,10 +91,10 @@ Firmware is not monolithic, and it is helpful to understanding both what is 'in'
 - (If required) Backed-up U-boot environment variables, see - [§2.4.1](#241-u-boot-environment-variables)
 
 **Know:**
-- How to get into the 'Recovery Linux' environment, see - [§2.3.2](#232-recovery-linux-101) or [getting started](https://docs.mono.si/gateway-development-kit/getting-started#first-boot)).
-- How to use the serial console, see - [§2.3.3](#233-serial-console-101) or [getting started](https://docs.mono.si/gateway-development-kit/getting-started#first-boot)).
+- How to get into the 'Recovery Linux' environment, see: [§2.3.2](#232-recovery-linux-101) or [getting started](https://docs.mono.si/gateway-development-kit/getting-started#first-boot)).
+- How to use the serial console, see: [§2.3.3](#233-serial-console-101) or [getting started](https://docs.mono.si/gateway-development-kit/getting-started#first-boot)).
 - Which port/interface you plugged the ethernet cable into - see [HARDWARE.md](HARDWARE.md#31-as-shipped-with-cosmetic-correction-applied)
-- How the boot process works - see [HARDWARE.md](HARDWARE.md#2-boot-chain)
+- How the boot process works, see: [HARDWARE.md](HARDWARE.md#2-boot-chain)
 - The private IP range used by your local connected network (e.g. IPv4 192.168.0.0/24, or 10.0.0.0/24 etc)
 - The IP of your upstream router / modem (e.g. 192.168.0.1/24, or 10.0.0.1/24, etc)
 - Your DNS server IP (only if different to your existing router e.g. a PiHole or simila, see - §2.3.4)
@@ -105,6 +105,7 @@ Firmware is not monolithic, and it is helpful to understanding both what is 'in'
 This is the small read-only linux environment that exists to enable firmware updates, and device recovery. It is part of the firmware image, as shown in [§2.2.1](#221-firmware-structure)
 
 **To access the 'Recovery Linux':**
+
 1) Power on
 2) Wait until prompted
 3) Press any key to interrupt boot
@@ -144,17 +145,17 @@ cat /etc/resolv.conf	# Check your addition is consistently formatted
 
 There are four\* main methods to update the firmware of the Mono Gateway Development Kit:
 
->**NOTE:** If performing the update for the first time you **MUST** use the 'Legacy' method. 
-
-1) **'Legacy'** - (1st time) Manual updating via standard Linux CLI tools - `ip`, `curl`, `dd`, `flashcp`, see - §2.4.2
-
-2) **'Normal'** - (Recommended) Using the new `firmware` helper, and the latest [firmware.mono.si](https://firmware.mono.si/)  firmware, , see - §2.4.3
-
-3) **'Offline'** - (Advanced) Using the new `firmware` helper, with locally staged firmware - IE via USB, TFTP, local HTTP server, see - §2.4.4
-
-4) **'Mono Imager'** - See: [mono-imager](https://github.com/HAHermsen/mono-imager)
-
 This section will cover pre-requisites and requirements for each method. 
+
+>**NOTE:** If performing the update for the first time you ***MUST*** use the 'Legacy' method. 
+
+1) ***'Legacy'*** - (1st time) Manual updating via standard Linux CLI tools - `ip`, `curl`, `dd`, `flashcp`, see: [§2.4.2](#242-legacy-update-requirements)
+
+2) ***'Normal'*** - (Recommended) Using the new `firmware` helper, and the latest [firmware.mono.si](https://firmware.mono.si/)  firmware, see: [§2.4.3](#243-normal-update-requirements)
+
+3) ***'Offline'*** - (Advanced) Using the new `firmware` helper, with locally staged firmware - e.g. via USB, TFTP, local HTTP server, see: [§2.4.4](#244-offline-update-requirements)
+
+4) ***'Mono Imager'*** - See: [mono-imager](https://github.com/HAHermsen/mono-imager)
 
 >\***NOTE:** Semi-hosting via JTAG debugger provides a further option of last resort which is also used to enable the recovery **'bricked'** (unbootable) devices. This is out of scope for this guide. If required, see other community resources: e.g. [moshevds/mono-gateway-uart-recovery](https://github.com/moshevds/mono-gateway-uart-recovery/tree/main) or seek help via the [Mono Discord](https://discord.com/invite/FGHJ3J5v5W). 
 
@@ -168,7 +169,7 @@ These are located within the 'firmware' at the 3 MB offset, and are what directs
 
 There are two methods to save/retain the U-boot environment variables:
 
-**A)  Manually copy your current variables to a text editor** 
+#### A)  Manually copy your current variables to a text editor 
 
 >**NOTE:** If updating firmware for the 1st time and/or using the 'legacy' method, this is your only option
 
@@ -181,12 +182,12 @@ There are two methods to save/retain the U-boot environment variables:
 7) Paste the variables form your text editor
 8) Save by typing `saveenv` + return
 
-**B) Use the --preserve-env flag with the `firmware` helper using the 'Normal' method**
+#### B) Use the --preserve-env flag with the `firmware` helper using the 'Normal' method
 ```bash
 firmware update --preserve-env			# Update firmware; retain U-Boot env vars
 ```
 
-### 2.4.2 'Legacy' update requirements
+### 2.4.2 *'Legacy'* update requirements
 
 >**NOTE:** **If performing the update for the first time - this is your only initial option**
 
@@ -215,9 +216,9 @@ You may note the `dd` command passes several additional arguments. These can be 
 ...skip=1  							# Skip reading the first N input blocks
 ...seek=1 							# Skip writing the first N output blocks
 ```
-In short, the `dd` command skips reading and writing to the first offset position. This is because the *'Reset codeword (RCW)+ BL2 bootloader'* located at the mtd0/0MB offset which remains unchanged between firmware versions. The RCW configuration is fixed by the physical PCB design.
+In short, the `dd` command skips reading and writing to the first offset position. This is because the *'Reset codeword (RCW)+ BL2 bootloader'* located at the mtd0 / 0MB offset which remains unchanged between firmware versions. The RCW configuration is fixed by the physical PCB design.
 
-### 2.4.3 'Normal' Update requirements 
+### 2.4.3 *'Normal'* Update requirements 
 
 >**NOTE:** **When available - this is the (current) recommended route.**
 
@@ -225,7 +226,7 @@ By default, Mono Gateway Development Kit firmware updates are performed using th
 
 No further preparation required - Move onto §3 to update your firmware.
 
-### 2.4.4 'Offline' update requirements
+### 2.4.4 *'Offline'* update requirements
 
 >**NOTE:** This is ***not*** recommended, especially for the initial *'as-shipped'* firmware due to known issues (resolved in later firmware releases) with mounting FAT32 USB devices.
 
@@ -265,19 +266,19 @@ Executing the firmware update process branches here.
 
 ### Update methods
 
-- ***'Legacy'*** method, see: [§3.1](#31-legacy-method)
+>**NOTE:** If performing the update for the first time you ***MUST*** use the 'Legacy' method. 
 
->**NOTE:** If performing the update for the first time, you MUST use the 'Legacy' method
+- ***'Legacy'*** method, see: [§3.1](#31-legacy-method)
 
 - ***'Normal'*** method, see: [§3.2](#32-normal-method-using-firmware-helper)
 
 - ***'Offline'*** method, see: [§3.3](#33-offline-method)
 
-- Using `Mono-imager`, see: [§3.4]()
+- Using `Mono-imager`, see: [§3.4](#34-using-mono-imager)
 
 ## 3.1 'Legacy' method
 
->**NOTE: If you have not updated firmware before you MUST start here**
+>**NOTE:** If performing the update for the first time you ***MUST*** use start here
 
 **Before you start: - READ: [§2 Requirements!](#2-requirements)**
 
