@@ -45,28 +45,27 @@ flowchart TB
     G0("GPY115C\nMDIO :00") & G1("GPY115C\nMDIO :01") & G2("GPY115C\nMDIO :02")
     S1("SFP+\nfixed-link") & S2("SFP+\nfixed-link")
   end
-  
+
   subgraph ASIC ["I/O ASIC"]
     PORTALS <-->|"DMA"| FMAN
-    M0 --- G0
-    M1 --- G1
-    M2 --- G2
-    M3 --- S1
-    M4 --- S2
   end
-  
+
+  M0 --- G0
+  M1 --- G1
+  M2 --- G2
+  M3 --- S1
+  M4 --- S2
   CORES <-->|"dequeue/enqueue"| PORTALS
-  
-  style ASIC fill:#ccc,stroke:#333,color:#111
-  style PORTALS fill:#4a7,stroke:#333,color:#fff
-  style BP fill:#668,stroke:#333,color:#fff
-  style QP fill:#668,stroke:#333,color:#fff 
+
   style FMAN fill:#4a7,stroke:#333,color:#fff
   style M0 fill:#640,stroke:#333,color:#fff
   style M1 fill:#640,stroke:#333,color:#fff
   style M2 fill:#640,stroke:#333,color:#fff
   style M3 fill:#640,stroke:#333,color:#fff
   style M4 fill:#640,stroke:#333,color:#fff
+  style PORTALS fill:#4a7,stroke:#333,color:#fff
+  style BP fill:#668,stroke:#333,color:#fff
+  style QP fill:#668,stroke:#333,color:#fff 
   style PHY fill:#963,stroke:#333,color:#fff
   style G0 fill:#48a,stroke:#333,color:#fff
   style G1 fill:#48a,stroke:#333,color:#fff
@@ -78,7 +77,7 @@ flowchart TB
   style C1 fill:#963,stroke:#333,color:#fff
   style C2 fill:#963,stroke:#333,color:#fff
   style C3 fill:#963,stroke:#333,color:#fff
-
+  style ASIC fill:#ccc,stroke:#333,color:#111
 ```
 A visual overview of DPAA1 of the LS1064A SoC in the Mono Gateway development kit. 
 
