@@ -9,7 +9,7 @@ The primary source of truth for the Mono firmware is the [Mono gateway developme
 >**WARNING:** Failure to follow this guidance may result in the soft *'bricking'* of your device. Recovery from a *'bricked'* state requires either: additional hardware like a JTAG programmer, OR returning the device to Mono to rebuild. To avoid a bad outcome - **follow these two rules!**
 
 ---
-## 1. Overview
+# 1. Overview
 
 Updating the firmware of your Mono Gateway Development Kit is ***not*** essential.
 
@@ -275,7 +275,7 @@ Executing the firmware update process branches here.
 
 - Using `Mono-imager` see §3.4
 
-# 3.1 'Legacy' method
+## 3.1 'Legacy' method
 
 >**NOTE: If you have not updated firmware before you MUST start here**
 
@@ -525,7 +525,7 @@ If you get no output, go back to step STEP #11 and retry.
 
 ---
 
-# 3.3 'Offline' method
+## 3.3 'Offline' method
 
 **Before you start: - READ: §2!** 
 
@@ -547,13 +547,13 @@ firmware update --from PATH
 ```
 
 
-# 3.4 Using `Mono imager`
+## 3.4 Using `Mono imager`
 
 This is the newest of the firmware update methods and aims to provide a streamlined, scripted, firmware update and OS installation process.
 
 Full documentation for using `mono-imager` can be found in at [mono-imager](https://github.com/HAHermsen/mono-imager) GitHub repo.
 
-# 3.5 Troubleshooting
+## 3.5 Troubleshooting
 
 Some basic troubleshooting tips.
 
@@ -569,7 +569,7 @@ If your configured interface, e.g. `eth1` shows `no-carrier` - you've have likel
 
 2) Check any upstream firewall is not blocking/dropping traffic - if so, configure it accordingly.
 
-## 3.5.2 If nslookup fails:
+### 3.5.2 If nslookup fails:
 
 1) Ensure you have a working, accessible DNS server defined in `/etc/resolv.conf` and retry. For how to modify the local DNS configuration, see: §2.3.4
 
