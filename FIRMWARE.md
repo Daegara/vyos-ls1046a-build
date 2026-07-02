@@ -13,13 +13,13 @@ The primary source of truth for the Mono firmware is the [Mono gateway developme
 
 Updating the firmware of your Mono Gateway Development Kit is ***not*** essential.
 
-However, updating your firmware provide the significant benefits of Mono's continued firmware development. This provides: useful helper tools, functionality, bug-fixes, polish, and suppresses the verbose `INFO` logging seen at boot on the shipped firmware. For highlights, see: [§1.1](#11-Major-firmware-changes) 
+However, updating your firmware provides the significant benefits of Mono's continued firmware development. This includes: useful helper tools, functionality, bug-fixes, polish, and suppresses the verbose `INFO` logging seen at boot on the shipped firmware. For highlights, see: [§1.1](#11-Major-firmware-changes) 
 
 The majority of the Mono firmware code is available and may be explored in the associated [meta-mono](https://github.com/we-are-mono/meta-mono/tree/master) repo, but excludes the (licensed NXP-proprietary) microcode injected at build-time. Final Mono firmware releases are available separately at [firmware.mono.si](https://firmware.mono.si/), see: [§2.4.4](#244-offline-update-requirements)
 
 ## 1.1 Major firmware changes
 
-For the full detailed changelog see: [we-are-mono/CHANGELOG.md](https://github.com/we-are-mono/meta-mono/blob/master/CHANGELOG.md). 
+For the full detailed changelog, see: [we-are-mono/CHANGELOG.md](https://github.com/we-are-mono/meta-mono/blob/master/CHANGELOG.md). 
 
 #### **Highlights include:**
 
@@ -47,13 +47,13 @@ For the full detailed changelog see: [we-are-mono/CHANGELOG.md](https://github.c
 
 Before updating the firmware - Read this chapter carefully.
 
-This chapter section covers what will need, and what you need to know.
+This chapter section covers what you will *need*, and what you *need to know*.
 
 The **next** chapter provides a walk-through of the update process itself.
 
 ## 2.1 Physical preparation
 
-All methods to perform firmware updates will require access to the dip-switch on the main PCB. To access this, first remove the 4x T10 Torx screws and gently remove the clear plastic lid. For a visual guide see: [Mono's disassembly instructions](https://docs.mono.si/gateway-development-kit/hardware-description#disassembly-instructions)
+All methods to perform firmware updates will require access to the small dip-switch on the main PCB. To access this, first remove the 4x T10 Torx screws and gently remove the clear plastic lid. For a visual guide see: [Mono's disassembly instructions](https://docs.mono.si/gateway-development-kit/hardware-description#disassembly-instructions)
 
 ## 2.2 Firmware release files
 
