@@ -21,15 +21,24 @@ The majority of the Mono firmware code is available and may be explored in the a
 
 For the full detailed changelog see: [we-are-mono/CHANGELOG.md](https://github.com/we-are-mono/meta-mono/blob/master/CHANGELOG.md). 
 
-**Highlights include:**
+#### **Highlights include:**
+
 - Addition of the `firmware` update validator & helper - [2026-03-30](https://github.com/we-are-mono/meta-mono/blob/master/CHANGELOG.md#2026-03-30--add-firmware-management-tool-and-calver-versioning)
+
 	- Detects boot medium - [2026-04-11](https://github.com/we-are-mono/meta-mono/blob/master/CHANGELOG.md#2026-04-11--add-boot-medium-detection-and-simplify-firmware-update-tool)
+
 	- Adds --usb PATH & auto RO mount - [2026-04-18](--add-usb-firmware-update-path](https://github.com/we-are-mono/meta-mono/blob/master/CHANGELOG.md#2026-04-18--add-usb-firmware-update-path)
+
 	- Adds --preserve-env option to retain U-boot env args - [2026-04-18](https://github.com/we-are-mono/meta-mono/blob/master/CHANGELOG.md#2026-04-18--default-firmware-update-to-full-rewrite-add---preserve-env)
+
 	- Adds --url arg for local HTTP/TFTP firmware staging - [2026-06-12](--add-usb-firmware-update-path](https://github.com/we-are-mono/meta-mono/blob/master/CHANGELOG.md#2026-04-18--add-usb-firmware-update-path)
+
 - Reversion of the cosmetic `udev` port remapping - [2026-03-28](https://github.com/we-are-mono/meta-mono/blob/master/CHANGELOG.md#2026-03-28--remove-fman-ethernet-alias-ordering-patch-and-dt-aliases) - see also [HARDWARE.md](HARDWARE.md#3-network-port-layout)
+
 - Enables Power-off/halt via GPIO functionality - [2026-04-15](https://github.com/we-are-mono/meta-mono/blob/master/CHANGELOG.md#2026-04-15--add-usb-storage-support-gpio-poweroff-and-fix-regressions)
+
 - Adds: [Firmware signing](https://github.com/we-are-mono/meta-mono/blob/master/CHANGELOG.md#2026-03-30--add-optional-ecdsa-p-256-signing-for-firmware-images); [USB mass storage](https://github.com/we-are-mono/meta-mono/blob/master/CHANGELOG.md#2026-04-15--add-usb-storage-support-gpio-poweroff-and-fix-regressions); [IPv6 DNS](https://github.com/we-are-mono/meta-mono/blob/master/CHANGELOG.md#2026-06-13--security-review-follow-ups-supply-chain-pinning-cve-scanning)[vim-tiny + coloured PS1](https://github.com/we-are-mono/meta-mono/blob/master/CHANGELOG.md#2026-06-13--recovery-ux-polish-colored-prompt-vim-tiny-firmware-tool-output)
+
 - Fixes: [Fix eMMC recovery](https://github.com/we-are-mono/meta-mono/blob/master/CHANGELOG.md#2026-03-28--split-u-boot-environment-for-qspi-and-emmc-boot-media); [Fix LED](https://github.com/we-are-mono/meta-mono/blob/master/CHANGELOG.md#2026-02-06--fix-package-name-collision-for-debapt-backends-5); [Fix FAT32 USB](https://github.com/we-are-mono/meta-mono/blob/master/CHANGELOG.md#2026-04-18--add-usb-firmware-update-path); [Fix RTC](https://github.com/we-are-mono/meta-mono/blob/master/CHANGELOG.md#2026-04-11--harden-firmware-security-fix-rtc-improve-build-quality)
 
 ---
