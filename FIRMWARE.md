@@ -92,6 +92,22 @@ Firmware is not monolithic, and it is helpful to understanding both what is 'in'
 - mtd3: Unlocks the HW-offloading capabilities of the LS1046A SoC, see: [HW-OFFLOADING.md](HW-OFFLOADING.md)
 - mtd4-6: Provide the 'Recovery Linux' ramfs environment
 
+### 2.2.2 Board serial number
+
+Serial numbers for Mono Gateway Development Kits units of the form `MT-R01A-0326-0XXXX` where `XXXX` indicates position in the initial 1000 units.
+
+The serial number can be pulled from EEPROM using the following python snippet:
+
+```python
+sudo python3 - <<"EOF"
+import os, fcntl
+fd = os.open("/dev/i2c-3", os.O_RDWR)
+fcntl.ioctl(fd, 0x0706, 0x50)
+os.write(fd, bytes([0x00, 0x28]))
+print(os.read(fd, 64).split(b"\x00")[0].decode())
+EOF
+```
+
 ## 2.3 (All methods) Common requirements
 
 **Have:**
