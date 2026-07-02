@@ -27,11 +27,11 @@ For the full detailed changelog see: [we-are-mono/CHANGELOG.md](https://github.c
 
 	- Detects boot medium - [2026-04-11](https://github.com/we-are-mono/meta-mono/blob/master/CHANGELOG.md#2026-04-11--add-boot-medium-detection-and-simplify-firmware-update-tool)
 
-	- Adds --usb PATH & auto RO mount - [2026-04-18](--add-usb-firmware-update-path](https://github.com/we-are-mono/meta-mono/blob/master/CHANGELOG.md#2026-04-18--add-usb-firmware-update-path)
+	- Adds --usb PATH & auto RO mount - [2026-04-18](https://github.com/we-are-mono/meta-mono/blob/master/CHANGELOG.md#2026-04-18--add-usb-firmware-update-path)
 
 	- Adds --preserve-env option to retain U-boot env args - [2026-04-18](https://github.com/we-are-mono/meta-mono/blob/master/CHANGELOG.md#2026-04-18--default-firmware-update-to-full-rewrite-add---preserve-env)
 
-	- Adds --url arg for local HTTP/TFTP firmware staging - [2026-06-12](--add-usb-firmware-update-path](https://github.com/we-are-mono/meta-mono/blob/master/CHANGELOG.md#2026-04-18--add-usb-firmware-update-path)
+	- Adds --url arg for local HTTP/TFTP firmware staging - [2026-06-12](https://github.com/we-are-mono/meta-mono/blob/master/CHANGELOG.md#2026-04-18--add-usb-firmware-update-path)
 
 - Reversion of the cosmetic `udev` port remapping - [2026-03-28](https://github.com/we-are-mono/meta-mono/blob/master/CHANGELOG.md#2026-03-28--remove-fman-ethernet-alias-ordering-patch-and-dt-aliases) - see also [HARDWARE.md](HARDWARE.md#3-network-port-layout)
 
