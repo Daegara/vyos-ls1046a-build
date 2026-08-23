@@ -9,6 +9,7 @@ The primary source of truth for the Mono firmware is the [Mono gateway developme
 >**WARNING:** Failure to follow this guidance may result in the soft *'bricking'* of your device. Recovery from a *'bricked'* state requires either: additional hardware like a JTAG programmer, OR returning the device to Mono to rebuild. To avoid a bad outcome - **follow these two rules!**
 
 ---
+
 # 1. Overview
 
 Updating the firmware of your Mono Gateway Development Kit is ***not*** essential.
@@ -45,11 +46,11 @@ For the full detailed changelog, see: [we-are-mono/CHANGELOG.md](https://github.
 
 # 2. Requirements
 
-Before updating the firmware - Read this chapter carefully.
+**Before updating the firmware – read this chapter carefully.**
 
-This chapter section covers what you will *need*, and what you *need to know*.
+This chapter covers what you will ***need***, and what you ***need to know*.**
 
-The **next** chapter provides a walk-through of the update process itself.
+The ***next*** chapter provides a walk-through of the update process itself.
 
 ## 2.1 Physical preparation
 
@@ -71,7 +72,7 @@ uboot-emmc-gateway-dk.env			# Default 'eMMC' U-Boot environment variables
 uboot-qspi-gateway-dk.env			# Default 'NOR' U-Boot environment variables
 ```
 
->**NOTE:** Firmware is now signed using the Mono ECDSA P-256 private key, and validated against the provided public key to validate the authenticity during the integrity-check of the `*.bin` firmware images.
+>**NOTE:** Firmware is now signed using the Mono ECDSA P-256 private key, and validated against the provided public key during the integrity-check of the `*.bin` firmware images.
 
 ### 2.2.1 Firmware structure
 
@@ -90,7 +91,7 @@ Firmware is not monolithic, and it is helpful to understanding both what is 'in'
 **Succinctly:** 
 - mtd0-2: Configures, initialises and boots the hardware
 - mtd3: Unlocks the HW-offloading capabilities of the LS1046A SoC, see: [HW-OFFLOADING.md](HW-OFFLOADING.md)
-- mtd4-6: Provide the 'Recovery Linux' ramfs environment
+- mtd4-6: Provides the 'Recovery Linux' ramfs environment
 
 ### 2.2.2 Board serial number
 
@@ -107,6 +108,8 @@ os.write(fd, bytes([0x00, 0x28]))
 print(os.read(fd, 64).split(b"\x00")[0].decode())
 EOF
 ```
+
+Other methods for obtaining this info can be found in the official Mono docs, see: [getting started](https://docs.mono.si/gateway-development-kit/getting-started#reading-serial-number-and-mac-addresses-from-eeprom)
 
 ## 2.3 (All methods) Common requirements
 
@@ -142,7 +145,7 @@ This is the small read-only linux environment that exists to enable firmware upd
 On Windows, use [Putty](https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html): 
 Select connection type `serial`, speed `11520`, and serial line `COM1`. NB: If in doubt, check Windows Device Manager for the correct COM# port number.
 
-On Linux, open a terminal:
+On Linux, open a terminal and use `tio`:
 ```bash
 ls /dev/ttyUSB*				# Find the right ttyUSB device, usually /dev/ttyUSB0
 
@@ -151,19 +154,15 @@ tio /dev/ttyUSB0			# Opens the required serial port
 
 ### 2.3.3 Custom DNS 101
 
-If you have a custom DNS setup, e.g. using a PiHole at `192.168.1.254`, define this DNS server in `/etc/resolv.conf`. 
+If you have a custom DNS setup, e.g. using a PiHole at `192.168.1.254`, ensure you define this DNS server in `/etc/resolv.conf`. 
 
-The entry format depends on the age of the firmware you are using. If in doubt, check the format used, and ensure your additional nameservers follow the same format.
+Additional nameservers should follow the format of any existing default entries
 ```bash
 cat /etc/resolv.conf	# Check the format used in your firmware version
 
-# If the output is an IP addresses list IE '8.8.8.8' then:
-echo '192.168.1.254 pihole' >> /etc/resolv.conf					# Adds pihole DNS
-
-# If the output contains 'nameserver 8.8.8.8' then:
 echo 'nameserver 192.168.1.254 pihole' >> /etc/resolv.conf		# Adds pihole DNS
 
-cat /etc/resolv.conf	# Check your addition is consistently formatted
+nslookup google.com		# Check DNS resolution works
 ```
 
 ## 2.4 Firmware update requirements
@@ -174,13 +173,13 @@ This section will cover pre-requisites and requirements for each method.
 
 >**NOTE:** If performing the update for the first time you ***MUST*** use the 'Legacy' method. 
 
-1) ***'Legacy'*** - (1st time) Manual updating via standard Linux CLI tools - `ip`, `curl`, `dd`, `flashcp`, see: [§2.4.2](#242-legacy-update-requirements)
+1) ***'Legacy'*** – (1st time) Manual updating via standard Linux CLI tools - `ip`, `curl`, `dd`, `flashcp`, see: [§2.4.2](#242-legacy-update-requirements)
 
-2) ***'Normal'*** - (Recommended) Using the new `firmware` helper, and the latest [firmware.mono.si](https://firmware.mono.si/)  firmware, see: [§2.4.3](#243-normal-update-requirements)
+2) ***'Normal'*** – (Recommended) Using the new `firmware` helper, and the latest [firmware.mono.si](https://firmware.mono.si/)  firmware, see: [§2.4.3](#243-normal-update-requirements)
 
-3) ***'Offline'*** - (Advanced) Using the new `firmware` helper, with locally staged firmware - e.g. via USB, TFTP, local HTTP server, see: [§2.4.4](#244-offline-update-requirements)
+3) ***'Offline'*** – (Advanced) Using the new `firmware` helper, with locally staged firmware - e.g. via USB, TFTP, local HTTP server, see: [§2.4.4](#244-offline-update-requirements)
 
-4) ***'Mono Imager'*** - See: [mono-imager](https://github.com/HAHermsen/mono-imager)
+4) ***'Mono Imager'*** – See: [mono-imager](https://github.com/HAHermsen/mono-imager)
 
 >\***NOTE:** Semi-hosting via JTAG debugger provides a further option of last resort which is also used to enable the recovery of **'bricked'** (unbootable) devices. This is out of scope for this guide. If required, see other community resources: e.g. [moshevds/mono-gateway-uart-recovery](https://github.com/moshevds/mono-gateway-uart-recovery/tree/main) or seek help via the [Mono Discord](https://discord.com/invite/FGHJ3J5v5W). 
 
@@ -208,13 +207,14 @@ There are two methods to save/retain the U-boot environment variables:
 8) Save by typing `saveenv` + return
 
 #### B) Use the --preserve-env flag with the `firmware` helper using the 'Normal' method
+
 ```bash
 firmware update --preserve-env			# Update firmware; retain U-Boot env vars
 ```
 
 ### 2.4.2 *'Legacy'* update requirements
 
->**NOTE:** **If performing the update for the first time - this is your only initial option**
+>**NOTE:** **If performing the update for the first time - this is your only manual option**
 
 The 'legacy' method requires some awareness of some common linux CLI tools, as outlined below:
 ```bash
@@ -257,13 +257,13 @@ No further preparation required - Move onto [§3](#3-the-firmware-update-process
 
 To prepare to perform an *'offline'* firmware update, you must: 
 
-	**A) Obtain the firmware release files** 
+#### A) Obtain the firmware release files 
 
-Mono firmware can be obtained from [firmware.mono.si](https://firmware.mono.si/), using username: `mono`, and utilising a MAC address of from your device, in the form `xx:xx:xx:xx:xx:xx` as the password. 
+Mono firmware can be obtained from [firmware.mono.si](https://firmware.mono.si/), using username: `mono`, and utilising a MAC address of your device, in the form `xx:xx:xx:xx:xx:xx` as the password. 
 
 >**NOTE:** MAC addresses are noted on a physical sticker on the base of the unit, or can be found via use of the `ip address show` command within the 'Recovery Linux' environment.
 
-	**B) Stage firmware files in an accessible location**
+#### B) Stage firmware files in an accessible location
 
 >**NOTE:** On the 'as-shipped' shipped firmware, known bugs will frustrate the use of USB drives. 
 
@@ -278,12 +278,12 @@ Firmware can also staged on a local web server, and retrieved via the same `curl
 With the firmware staged, move onto [§3](#3-the-firmware-update-process) to update your firmware.
 
 ---
+
 # 3. The firmware update process
 
 \*\*\* WARNING: ONLY UPDATE THE FIRMWARE ON ONE STORAGE DEVICE AT A TIME \*\*\*
 
 \*\*\* WARNING: NEVER UPDATE THE DEVICE YOU USED TO BOOT \*\*\*
-
 
 >**WARNING:** Failure to follow this guidance may result in the soft *'bricking'* of your device. Recovery from a *'bricked'* state requires either: additional hardware like a JTAG programmer, OR returning the device to Mono to rebuild. To avoid a bad outcome - **follow these two rules!
 
@@ -291,15 +291,21 @@ With the firmware staged, move onto [§3](#3-the-firmware-update-process) to upd
 
 >**NOTE:** If performing the update for the first time you ***MUST*** use the 'Legacy' method. 
 
-- ***'Legacy'*** method, see: [§3.1](#31-legacy-method)
+- Using `Mono-imager`, see: [§3.1](#31-using-mono-imager)
 
-- ***'Normal'*** method, see: [§3.2](#32-normal-method-using-firmware-helper)
+- ***'Legacy'*** method, see: [§3.2](#32-legacy-method)
 
-- ***'Offline'*** method, see: [§3.3](#33-offline-method)
+- ***'Normal'*** method, see: [§3.3](#33-normal-method-using-firmware-helper)
 
-- Using `Mono-imager`, see: [§3.4](#34-using-mono-imager)
+- ***'Offline'*** method, see: [§3.4](#34-offline-method)
 
-## 3.1 'Legacy' method
+## 3.1 Using `Mono-imager`
+
+This is the newest of the firmware update methods and aims to provide a streamlined and guided firmware update and OS installation process. **This should be your first choice in Firmware update methods**
+
+Full documentation for using `mono-imager` can be found in the [mono-imager](https://github.com/HAHermsen/mono-imager) GitHub repo.
+
+## 3.2 'Legacy' method
 
 >**NOTE:** If performing the update for the first time you ***MUST*** use start here
 
@@ -434,7 +440,7 @@ If you get no output, go back to step STEP #11 and retry.
 
 ---
 
-## 3.2 'Normal' method (using `firmware` helper)
+## 3.3 'Normal' method (using `firmware` helper)
 
 **Before you start: - READ: [§2 Requirements](#2-requirements)**
 
@@ -562,13 +568,13 @@ If you get no output, go back to step STEP #11 and retry.
 
 ---
 
-## 3.3 'Offline' method
+## 3.4 'Offline' method
 
 **Before you start: - READ: §2!** 
 
 Ensure you have all the information you will need to complete the process.
 
-This is a variation of the process shown in [§3.2](#32-normal-method-using-firmware-helper) with a singular modification in steps #9 + #14 which directs the `firmware` helper where to source the firmware `*.bin` files. 
+This is a variation of the process shown in [§3.3](#33-normal-method-using-firmware-helper) with a singular modification in steps #9 + #14 which directs the `firmware` helper where to source the firmware `*.bin` files. 
 
 >**NOTE:** For the full range of available options, run `firmware help`
 
@@ -584,11 +590,6 @@ firmware update --from PATH
 ```
 
 
-## 3.4 Using `Mono imager`
-
-This is the newest of the firmware update methods and aims to provide a streamlined, scripted, firmware update and OS installation process.
-
-Full documentation for using `mono-imager` can be found in the [mono-imager](https://github.com/HAHermsen/mono-imager) GitHub repo.
 
 ## 3.5 Troubleshooting
 
@@ -608,6 +609,6 @@ If your configured interface, e.g. `eth1` shows `no-carrier` - you've have likel
 
 ### 3.5.2 If nslookup fails:
 
-1) Ensure you have a working, accessible DNS server defined in `/etc/resolv.conf` and retry. For how to modify the local DNS configuration, see: §2.3.4
+1) Ensure you have a working, accessible DNS server defined in `/etc/resolv.conf` and retry. For how to modify the local DNS configuration, see: [§2.3.3](FIRMWARE.md#233-custom-dns-101)
 
 2) Check any upstream firewall is not blocking/dropping traffic - if so, configure it accordingly.

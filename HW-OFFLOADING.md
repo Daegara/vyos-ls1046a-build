@@ -120,7 +120,7 @@ NXP DPAA1/Layerscape DPAA, have been around in the mainline Linux Kernel in vari
 
 ### 2.1.1 Limitations
 
-The mainline DPAA1 driver is built to leverage the Coarse Classifier functions of the open-source `106.4.18` NXP microcode that is [freely available](https://github.com/nxp-qoriq/qoriq-fm-ucode) . As the function's name suggests, this classifier enables comparatively limited functionality of the underlying ASIC, and this microcode version enables comparatively little. In performance terms, this combination was designed for a previous era of Linux networking. A more detailed diff of the available microcode can be found in [arch/dpaa1-architecture](arch/dpaa1-architecture)
+The mainline DPAA1 driver is built to leverage the Coarse Classifier functions of the open-source `106.4.18` NXP microcode that is [freely available](https://github.com/nxp-qoriq/qoriq-fm-ucode). As the function's name suggests, this classifier enables comparatively limited functionality of the underlying ASIC, and this microcode version enables comparatively little. In performance terms, this combination was designed for a previous era of Linux networking. A more detailed diff of the available microcode can be found in [arch/dpaa1-architecture](arch/dpaa1-architecture)
 
 ## 2.2 Faster, but old: NXP DPAA1 (NXP ASK)
 
@@ -134,18 +134,18 @@ During the development of the Mono Gateway Development Kit, Mono purchased NXP A
 
 ### 2.2.2 Forward-ports
 
-Mono presented their solution to the (EoL) kernel [in a video](https://www.youtube.com/watch?v=xRvi3k8XV8E) discussing using supervised AI to port the aging Kernel 5.4 NXP DPAA1+ASK code forward to the newer NXP lf-6.12.49 Kernel branch. This is what Mono then shipped in the default [OpenWRT build](https://github.com/we-are-mono/OpenWRT-ASK) installed the Mono Gateway Development Kits.
+Mono presented their solution to the (EoL) lf-5.4 kernel [in a video](https://www.youtube.com/watch?v=xRvi3k8XV8E), discussing using supervised AI to port the aging Kernel lf-5.4 NXP DPAA1+ASK code forward to the newer NXP lf-6.12.49 Kernel branch. This is what Mono then shipped in the default [OpenWRT build](https://github.com/we-are-mono/OpenWRT-ASK) installed on the Mono Gateway Development Kits.
 
-The subsequent official [Opnsense builds](https://opnsense.mono.si/) utilised a similar re-port process of the full NXP lf-5.4 patches + ASK user-space components over to FreeBSD, on which Opnsense is based.
+Subsequent official [OPNsense builds](https://opnsense.mono.si/) utilised a similar repeat forward-port process of the full NXP lf-5.4 SDK patches + ASK user-space components over to FreeBSD, on which OPNsense is based, along with a Linux-compatibility shim.
 
 ---
 # 3. Modernising DPAA1 & ASK for VyOS
 
-The creation of an initial VyOS build for Mono Gateway Development Kits is described in [STARTING-GATE.md](STARTING-GATE.md), and leverages the VyOS 1.5.x 'Rolling' release sources built for the Kernel 6.6 LTS branch. As porting from 5.4 LTS to 6.12.49 had been proven by Mono, porting from 5.4 to 6.6 LTS for VyOS 'Rolling', was readily achievable.
+The creation of an initial VyOS build for Mono Gateway Development Kits is described in [STARTING-GATE.md](STARTING-GATE.md), and leveraged the VyOS 1.5.x 'Rolling' release sources built for the Kernel 6.6 LTS branch. As porting from lf-5.4 LTS to lf-6.12.49 had been proven by Mono, porting from lf-5.4 to 6.6 LTS for VyOS 'Rolling' for a proof of concept build, proved achievable. Getting this to boot still proved challenging as [STARTING-GATE.md](STARTING-GATE.md) outlines
 
-VyOS 'Rolling' was subsequently rebased from Kernel `6.6.137 LTS` to the near-experimental `6.18 Mainline`, representing a significant shift in the underlying kernel structures and primitives. What was portable from 5.4, or 6.6 to 6.12, as mono did for OpenWRT fundamentally breaks if porting to 6.18. A new approach is now required. 
+VyOS 'Rolling' was subsequently rebased from Kernel `6.6.137 LTS` to the near-experimental `6.18 Mainline`, representing a significant shift in the underlying kernel structures and primitives. What was portable from `5.4`, or `6.6` to `6.12`, fundamentally breaks if porting to mainline `6.18`. Too much has changed, and a new approach is now required. 
 
-Rather than continue to carry-forward the now historical DPAA1 and ASK codebase, attempting to continue modernising it for more recent Kernel releases, a decision was taken to fundamentally rebuild ASK as ASK2. This enables a more holistic modernisation of the DPAA1 driver to utilise modern Kernel networking performance improvements like zero-copy forwarding with AF_XDF.
+Rather than continue to carry-forward the now *historical* DPAA1 and ASK codebase, attempting to continue modernising it for more recent Kernel releases, a decision was taken to fundamentally rebuild ASK as ASK2. This enables a more holistic modernisation of both ASK and the DPAA1 driver to utilise modern Kernel networking performance improvements like zero-copy forwarding with AF_XDF.
 
 # 3.1 A Modern DPAA1 Driver
 

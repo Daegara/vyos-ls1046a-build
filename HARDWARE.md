@@ -9,10 +9,10 @@ The primary source of truth for the physical hardware is the [Mono development k
 | **CPU**                        | NXP QorIQ LS1046A SoC: 4x Cortex-A72 @1.6 GHz                                                                                                                                                                                                     |
 | **RAM**                        | 8 GB ECC DDR4 @2100 MT/s                                                                                                                                                                                                                          |
 | **Networking**                 | 2x SFP+ 10 Gbps (10GBASE-R)<br>3x RJ45 1 Gbps (1000BASE-T)                                                                                                                                                                                        |
-| **M.2 expansion\***            | 1x M.2_1 Key-E (Left) *'Smart home'* — interfaces: SDIO, UART, SPI, I2C — Usage: low-bandwidth tri-radio cards (Wifi5, Bluetooth, Thread)<br>1x M.2_2 Key-E (Right) *'Wireless'* — interfaces: UART, PCIe 3.0 x1 — Usage: Wifi6 2x2 MU-MIMO cards |
+| **M.2 expansion\***            | 1x M.2_1 Key-E (Left) *'Smart home'* – interfaces: SDIO, UART, SPI, I2C – Usage: low-bandwidth tri-radio cards (Wifi5, Bluetooth, Thread)<br>1x M.2_2 Key-E (Right) *'Wireless'* – interfaces: UART, PCIe 3.0 x1 – Usage: Wifi6 2x2 MU-MIMO cards |
 | **Storage**                    | *User selectable boot source via PCB dip-switch:*<br>1x 64 MB NOR flash for Bootloader<br>1x 32 GB eMMC for Operating System                                                                                                                      |
-| **Firmware**                   | NOR + eMMC (user-updatable) firmware targets are [available](https://firmware.mono.si/)                                                                                                                                                           |
-| **Boot loader**                | U-Boot 2025.04 via `booti`                                                                                                                                                                                                                        |
+| **Firmware**                   | NOR + eMMC (user-updatable) firmware targets are available, see: [FIRMWARE.md](FIRMWARE.md#244-offline-update-requirements)                                                                                                                       |
+| **Boot loader**                | U-Boot via `booti`                                                                                                                                                                                                                                |
 | **External I/O**               | 1x USB-C 3.1 5 Gbps port, max 5V 3A<br>1x USB-C UART (serial) Console, 115200 baud (`ttyS0`)                                                                                                                                                      |
 | **Internal I/O**               | 1x 4-pin 5V PWM CPU fan<br>1x 4-pin 5V header (unused)<br>1x Programmable RGBW status LED<br>1x JTAG programmer connector<br>100+ PCB test points                                                                                                 |
 | **Power supply<br>(external)** | 1x USB-C PD 3.0: 20V 2A (40W), or 15V 3A (45W)                                                                                                                                                                                                    |
@@ -32,9 +32,9 @@ There is no fixed 'BIOS' ROM as you might find on an x86 computer, as this is an
 
 >**NOTE:** Use **NOR** as your default boot device, **except when updating the NOR [FIRMWARE.md](FIRMWARE.md)**. This ensures that after installing an OS to the eMMC, your device remains bootable.
 
-## 2.1 Boot chain: As shipped + OpenWRT + Opnsense
+## 2.1 Boot chain: As shipped + OpenWRT + OPNsense
 
-Initially, either the 64 MB NOR flash, OR the 32 GB eMMC can be used as the primary boot device, as shown below. This works because each storage device has a it's own separate copy of U-Boot, and a small 'Recovery Linux' environment in an initial firmware partition located in the first 32MB of each device. The primary use of the 'Recovery Linux' environment is to perform firmware upgrades, and to enable device recovery. [FIRMWARE.md](FIRMWARE.md) provides a brief *'how-to'* guide for updating the device firmware, and provides critical warnings for avoid common issues.
+Initially, either the 64 MB NOR flash, OR the 32 GB eMMC can be used as the primary boot device, as shown below. This works because each storage device has a it's own separate copy of U-Boot, and a small *'Recovery Linux'* environment in an initial firmware partition located in the first 32MB of each device. The primary use of the *'Recovery Linux'* environment is to perform firmware upgrades, and to enable device recovery. [FIRMWARE.md](FIRMWARE.md) provides a brief *'how-to'* guide for updating the device firmware, and provides critical warnings for avoid common issues.
 
 **The *active* boot device is controlled via a physical dip-switch on the main PCB.** This defines which storage device is used to load U-boot when the system is powered. 
 
@@ -128,18 +128,18 @@ flowchart LR
   style FW fill:#666,stroke:#333,color:#aaa
 ```
 
->**NOTE:** If installing VyOS onto the eMMC per [INSTALL.md](INSTALL.md) you will (currently) lose the ability to directly boot from eMMC. This is a known [issue#24](https://github.com/mihakralj/vyos-ls1046a-build/issues/24) for which a fix is known, but not yet deployed. This can be remedied via re-imaging the eMMC firmware located in the first 32 MB 'reserved' partition on the eMMC. To do so manually, see [FIRMWARE.md](FIRMWARE.md).
+>**NOTE:** If installing VyOS onto the eMMC per [INSTALL.md](INSTALL.md) you will (currently) lose the ability to directly boot from eMMC. This is a known [issue#24](https://github.com/mihakralj/vyos-ls1046a-build/issues/24) for which a fix is known, but not yet deployed. This can be remedied via re-imaging the eMMC firmware located in the first 32 MB *'reserved'* partition on the eMMC. To do so manually, see [FIRMWARE.md](FIRMWARE.md).
 
 ## 2.2.1 Diving deeper
 
-For the curious, a full annotated boot sequence from earlier development can be walked-through in [plans/BOOT-PROCESS.md](plans/BOOT-PROCESS.md). This notes a number of boot log messages that have since been investigated, and are now suppressed in subsequent releases. These relate to typical x86 capabilities that simply are not present on this aarch64 HW, e.g. IOMMU nodes.
+For the curious, a full annotated boot sequence from earlier development can be walked-through in [plans/BOOT-PROCESS.md](plans/BOOT-PROCESS.md). This notes a number of boot log messages that have since been investigated, and are now suppressed in subsequent releases. These relate to typical x86 capabilities that simply are not present on this aarch64 HW, e.g. [IOMMU](https://en.wikipedia.org/wiki/Input%E2%80%93output_memory_management_unit) nodes.
 
 ---
 # 3. Network Port Layout
 
 The port layout on the Mono Gateway can be very confusing due to a hardware quirk that breaks the expected mapping between physical ports, and their logical named order. 
 
-The initial (as shipped) Mono Gateway Development Kit firmware applies a cosmetic fix for this (using a `udev` rule at boot-time). However, as §3.1.1 notes, all subsequent firmware releases ([2026-03-28+](https://github.com/we-are-mono/meta-mono/blob/master/CHANGELOG.md#2026-03-28--remove-fman-ethernet-alias-ordering-patch-and-dt-aliases)) now revert this for consistency between installed 'Recovery Linux' environments and the main (eMMC installed) OS, e.g. VyOS.
+The initial (as shipped) Mono Gateway Development Kit firmware applies a cosmetic fix for this (using a `udev` rule at boot-time). However, as [§3.1.1](HARDWARE.md#311-reversion) notes, all subsequent firmware releases ([2026-03-28+](https://github.com/we-are-mono/meta-mono/blob/master/CHANGELOG.md#2026-03-28--remove-fman-ethernet-alias-ordering-patch-and-dt-aliases)) now revert this for consistency between installed *'Recovery Linux'* environments and the main (eMMC installed) OS, e.g. VyOS.
 
 **Root cause** - The hardware network devices are enumerated out of step with their physical presentation, as 1,2,0,3,4, whereas one might more routinely expect 0,1,2,3,4. This is an entirely cosmetic issue, but it remains a source of persistent confusion amongst new users updating from the initial stock firmware.
 
@@ -173,9 +173,9 @@ Whilst readable, the correction will break for any subsequently loaded OS (VyOS,
 
 Requiring maintaining a manual patch that all OS maintainers must apply manually was not seen as a consistent or supportable approach. Following a discord straw-poll, Mono elected to revert the cosmetic fix from [Mono firmware 2026-03-28](https://github.com/we-are-mono/meta-mono/blob/master/CHANGELOG.md#2026-03-28--remove-fman-ethernet-alias-ordering-patch-and-dt-aliases) onwards. This provide a more consistent and supportable experience and reverts the (at-boot) port mapping to that shown in §3.2 below.
 
-> **NOTE:** All units, as shipped, have the cosmetic correction applied, and the interface order within the firmware 'Recovery Linux' environment reflects this correction. This may see the same physical interface assigned during the first firmware update, change it's assigned name after the firmware update. This is expected behaviour, but can be confusing if unexpected.
+> **NOTE:** All units, as shipped, have the cosmetic correction applied, and the interface order within the firmware *'Recovery Linux'* environment reflects this correction. This may see the same physical interface assigned during the first firmware update, change it's assigned name after the firmware update. This is expected behaviour, but can be confusing if unexpected.
 
-## 3.2 The hardware order, as enumerated - 1,2,0,3,4 
+## 3.2 The hardware order, as enumerated – 1,2,0,3,4 
 ```mermaid
 flowchart TB
   subgraph LDEV ["logical devices"]
@@ -213,7 +213,7 @@ flowchart TB
   style S2 fill:#49a,stroke:#333,color:#fff
 ```
 
-This quirk does divide opinions, but it remains a more consist default. It can be readily addressed once, post-boot, in your OS of choice (see §3.3 below). 
+This quirk does divide opinions, but it remains a more consist default. It can be readily addressed once, post-boot, in your OS of choice, as show in [§3.3](HARDWARE.md#33-vyos-port-naming) below. 
 
 > **NOTE:** This disparity is most likely to be observed in the firmware 'Recovery Linux' environment, e.g. when applying any subsequent firmware updates from the as-shipped FW release, or when migrating from one eMMC installed OS to another.
 
@@ -221,7 +221,7 @@ This quirk does divide opinions, but it remains a more consist default. It can b
 
 Enumeration proceeds normally, but sanity is restored.
 
-Interface names are inherently fungible, and VyOS elects to rename/renumber the physical ports to restore the more intuitive orderring scheme. This provides a more sustainable route, to the same desired outcome.
+Interface names are inherently fungible, and VyOS elects to rename/renumber the physical ports to restore the more intuitive ordering scheme. This provides a more sustainable route, to the same desired outcome.
 
 ```mermaid
 block-beta
@@ -247,7 +247,7 @@ block-beta
 ```
 The only notable anomaly this unavoidably introduces is seen in the order in which interfaces are printed via commands like `ip address show`. This is an extremely small price to pay for regaining certainty in of which interface you have just plugged your cable into.
 
->**NOTE:** As this renaming occurs *within VyOS*, the interface numbering seen in the separate firmware 'Recovery Linux' environment continues to reflect the hardware ordering shown in §3.2 above. Be mindful of this, especially if you regularly update the firmware and rely on muscle-memory for interface names!
+>**NOTE:** As this renaming occurs *within VyOS*, the interface numbering seen in the separate firmware 'Recovery Linux' environment continues to reflect the hardware ordering shown in [§3.2](HARDWARE.md#32-the-hardware-order-as-enumerated---12034) above. Be mindful of this, especially if you regularly update the firmware and rely on muscle-memory for interface names!
 
 ---
 
@@ -265,7 +265,7 @@ In addition to the headline specification outlined in §1, many further HW desig
 ## 4.1 Additional hardware specifications
 
 ### 4.1.1 Identified IC components
-\<IC part numbers, HW adddress etc\>
+\<IC part numbers, HW address etc\>
 ### 4.1.2 Enumerated communication buses
 \<Map I2C buses and devices here\>
 ## 4.2 LS1046A SoC configuration

@@ -18,13 +18,14 @@ The LS1046A SoC uses the Data Path Acceleration Architecture (DPAA1), which defi
 
 | **I want to...**                 | **Go to...**                                                                                                        |
 | -------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| **Use VyOS** on the Mono Gateway | **[INSTALL.md](INSTALL.md)**: Start here.                                                                           |
+| **Use VyOS** on the Mono Gateway | **[INSTALL.md](INSTALL.md)**: Start here                                                                            |
 | **Understand the HW**            | [HARDWARE.md](HARDWARE.md): Physical HW, boot-chain and known quirks                                                |
-| **Update the Firmware**          | [FIRMWARE.md](FIRMWARE.md): A brief how-to guide                                                                    |
+| **Update the Firmware**          | [FIRMWARE.md](FIRMWARE.md): A *'how-to'* guide                                                                      |
 | **Control HW & diagnose issues** | [HWCTL.md](HWCTL.md):  Control the main LEDs with `led` & diagnose issues with the seven built-in `*-check` scripts |
 | **Understand HW-Offloading**     | [HW-OFFLOADING.md](HW-OFFLOADING.md): Overview of the DPAA1/ASK network architecture                                |
+| **Manage VyOS via a web UI**     | [VYMANAGER.md](VYMANAGER.md): Manage VyOS using the Vymanager SDN controller & web GUI                              |
 | **See how this started**         | [STARTING-GATE.md](STARTING-GATE.md): Getting mainline VyOS to work (at all)                                        |
-| **See what's changed**           | [plans/CHANGELOG.md](plans/CHANGELOG.md): per-build changelog                                                       |
+| **See what's changed**           | [plans/CHANGELOG.md](plans/CHANGELOG.md): Per-build changelog                                                       |
 | **Dig into the archives**        | [RABBITHOLE.md](RABBITHOLE.md): Down you go...                                                                      |
 
 ## Architecture & Design

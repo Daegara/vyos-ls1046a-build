@@ -1,6 +1,6 @@
 # Getting mainline VyOS to initially boot
 
-What breaks when you drop a generic VyOS ARM64 ISO onto NXP Layerscape silicon, and the exact fixes that survived contact with the hardware. Thirteen things were broken out of the box. Most of the failures are silent, which is the part that costs you an afternoon. The worst ones looked like they worked but quietly haemorrhaged performance or dropped interfaces without a trace in dmesg.
+What breaks when you drop a generic VyOS ARM64 ISO onto NXP/Layerscape silicon, and the exact fixes that survived contact with the hardware. Thirteen things were broken out of the box. Most of the failures are silent, which is the part that costs you an afternoon. The worst ones looked like they worked but quietly haemorrhaged performance or dropped interfaces without a trace in dmesg.
 
 
 | # | Problem | Root Cause | Fix |
@@ -19,4 +19,4 @@ What breaks when you drop a generic VyOS ARM64 ISO onto NXP Layerscape silicon, 
 | 12 | No QSPI flash access | `CONFIG_SPI_FSL_QSPI` not set | `=y` + DTS partition map |
 | 13 | VPP capped at 3290 MTU | AF_XDP max frame ~3304 bytes on DPAA1 | Split-plane: VPP on SFP+ (no jumbo), kernel on RJ45 (full 9578 MTU) |
 
-Full postmortem with driver archaeology and DPAA1 architecture deep-dive: [plans/PORTING.md](plans/PORTING.md).
+For a full post-mortem with driver archaeology and DPAA1 architecture deep-dives, see: [plans/PORTING.md](plans/PORTING.md).
