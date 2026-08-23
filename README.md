@@ -26,7 +26,6 @@ The LS1046A SoC uses the Data Path Acceleration Architecture (DPAA1), which defi
 | **Manage VyOS via a web UI**     | [VYMANAGER.md](VYMANAGER.md): Manage VyOS using the Vymanager SDN controller & web GUI                              |
 | **See how this started**         | [STARTING-GATE.md](STARTING-GATE.md): Getting mainline VyOS to work (at all)                                        |
 | **See what's changed**           | [plans/CHANGELOG.md](plans/CHANGELOG.md): Per-build changelog                                                       |
-| **Dig into the archives**        | [RABBITHOLE.md](RABBITHOLE.md): Down you go...                                                                      |
 
 > Review the [open issues](https://github.com/mihakralj/vyos-ls1046a-build/issues) before installing. Some limitations are permanent hardware constraints. Better to know before you're three hours into a rack installation.
 ## Architecture & Design
