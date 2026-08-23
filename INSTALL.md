@@ -87,7 +87,7 @@ This loads `boot.scr` from the USB FAT32 partition, which loads the kernel, DTB,
 
 Watch the boot log for 60–90 seconds until the VyOS login prompt appears.
 
-> **NOTE:** **If `usb start` hangs or shows no devices:** Try a USB 2.0 drive. Some USB 3.0 drives aren't detected by the LS1046A USB controller.
+> **NOTE:** If `usb start` hangs or shows no devices, try a USB 2.0 drive. Some USB 3.0 drives aren't detected by the LS1046A USB controller.
 
 > **NOTE:** The hybrid ISO has two partitions when written to USB: partition 1 (ISO9660 with squashfs) and partition 2 (FAT32 with boot files). U-Boot loads from partition 2 explicitly via `fatload usb 0:2`. After kernel boot, live-boot finds the squashfs on the ISO9660 partition.
 
