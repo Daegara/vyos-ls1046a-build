@@ -28,6 +28,7 @@ The LS1046A SoC uses the Data Path Acceleration Architecture (DPAA1), which defi
 | **See what's changed**           | [plans/CHANGELOG.md](plans/CHANGELOG.md): Per-build changelog                                                       |
 | **Dig into the archives**        | [RABBITHOLE.md](RABBITHOLE.md): Down you go...                                                                      |
 
+> Review the [open issues](https://github.com/mihakralj/vyos-ls1046a-build/issues) before installing. Some limitations are permanent hardware constraints. Better to know before you're three hours into a rack installation.
 ## Architecture & Design
 
 The design specs and deep-dives behind the build. Start here to understand *how* it works, not just how to run it. Plans and Specs utilise [HADS](https://github.com/catcam/hads) to structure information.
@@ -37,14 +38,14 @@ The design specs and deep-dives behind the build. Start here to understand *how*
 | [specs/dpaa1-afxdp-modernization-spec.md](specs/dpaa1-afxdp-modernization-spec.md) | **DPAA1 AF_XDP driver modernization** — the flavor-ops abstraction, XSK-backed BMan pools, per-CPU NAPI on dedicated QMan channels, the four FMan HW offloads (CC / HM / Policer / CEETM), and the per-milestone status tracker |
 | [plans/NETWORKING-DEEP-DIVE.md](plans/NETWORKING-DEEP-DIVE.md)                     | **DPAA1 networking internals** — FMan architecture, QBMan portal allocation, the three-driver split (`fsl_dpaa_mac` / `fsl_dpa` / `fsl_dpaa_eth`), and how packets flow before the CPU sees them                                |
 | [specs/dual-dataplane.md](specs/dual-dataplane.md)                                 | **Single-image dual-dataplane model** — one ISO ships every datapath; the silicon mode state machine (mainline/RSS ↔ ASK offload, with VPP as an AF_XDP overlay), runtime switching, and the reversibility contract             |
-| [plans/ASK-PLANS.md](ASK-PLANS.md)                                                 | **Understand work towards ASK2** — what ASK 1.x did right, what's changing in ASK2, and why                                                                                                                                     |
-| [specs/ask2-rewrite-spec.md](specs/ask2-rewrite-spec.md)                           | **ASK2 hardware accelerator** — the modern in-tree rewrite of the FMan/QMan offload engine: `ask.ko`, the PCD subsystem, config-driven engagement (`set system offload ask`)                                                    |
+| [plans/ASK2-MASTER-PLAN.md](plans/ASK2-MASTER-PLAN.md)                             | **Understand work towards ASK2** — what ASK 1.x did right, what's changing in ASK2, and why                                                                                                                                     |
+| [specs/ask2-rewrite-spec.md](specs/ask2-rewrite-spec.md)                           | **ASK2 hardware accelerator** — the modern in-tree rewrite of the FMan/QMan offload engine: `ask.ko`, the PCD subsystem, and independent per-interface IPv4/IPv6 controls (`set interfaces ethernet eth offload ipv4 / ipv6`    |
 | [specs/vpp-dpaa1-ls1046a-spec.md](specs/vpp-dpaa1-ls1046a-spec.md)                 | **VPP AF_XDP overlay** — kernel-bypass dataplane on the 10G SFP+ ports, thermal constraints, and the kernel↔VPP coexistence model                                                                                               |
 | [plans/PORTING.md](plans/PORTING.md)                                               | **Porting postmortem** — driver archaeology, the boot-flow rework, and what broke (and why) bringing mainline VyOS up on the LS1046A                                                                                            |
 
 ## Build and Release Assets
 
-Automated weekly (Friday 01:00 UTC) via GitHub Actions.
+Built on demand via GitHub Actions (`workflow_dispatch` — trigger "VyOS LS1046A build (self-hosted)"; no schedule).
 
 | File                          | Description                                                                                                                                    |
 | ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -63,6 +64,7 @@ This is, as far as anyone can tell, the only VyOS build targeting bare-metal ARM
 - **U-Boot direct boot.** `vyos.env` on the ext4 partition selects the active image. No GRUB, no OOM, no overhead. Image upgrades write the file automatically.
 - **~80s cold boot to login prompt.** Single boot, no kexec double-reboot. `CONFIG_DEBUG_PREEMPT` suppressed saves ~20s of cosmetic scheduler spam.
 - **HW-accelerated AF_XDP datapath.** The DPAA1 driver is modernized into a single shared kernel binary with `ndo_xsk_wakeup`, XSK-backed BMan pools, per-CPU NAPI on dedicated QMan channels, and FMan HW offloads (CC / HM / Policer / CEETM). The earlier DPDK DPAA PMD path was abandoned (RC#31: `dpaa_bus` probe globally disrupts kernel FMan interfaces); AF_XDP is the production kernel+VPP coexistence path. Design and milestone status: [specs/dpaa1-afxdp-modernization-spec.md](specs/dpaa1-afxdp-modernization-spec.md).
+- **FMan hardware routing offload (ASK2).** Routed IPv4 **and** IPv6 TCP/UDP unicast flows are steered through the Frame Manager's coarse classifier and FE opcode engine — TTL/hop-limit decrement and L2 rebuild happen in hardware, the CPU is bypassed for established flows, and nftables conntrack stays authoritative. Enable per interface and per family: `set interfaces ethernet eth<n> offload ipv4` / `offload ipv6`. ~7.3 Gbit/s unidirectional and ~12.9 Gbit/s bidirectional per 10G port at near-zero CPU; anything the engine can't represent (ICMP, fragments, NAT/VLAN, unresolved neighbours) falls back to software forwarding automatically. Design: [specs/ask2-rewrite-spec.md](specs/ask2-rewrite-spec.md).
 
 ## Why VyOS?
 
@@ -80,4 +82,4 @@ This is, as far as anyone can tell, the only VyOS build targeting bare-metal ARM
 
 ## License
 
-VyOS sources are GPL 2.0. ARM64 builder image from [huihuimoe/vyos-arm64-build](https://github.com/huihuimoe/vyos-arm64-build). Hardware documentation from [mono-gateway-docs](https://github.com/we-are-mono/docs/tree/master).
+VyOS sources are GPL-2.0. ARM64 builder image from [huihuimoe/vyos-arm64-build](https://github.com/huihuimoe/vyos-arm64-build). Hardware documentation from [mono-gateway-docs](https://github.com/we-are-mono/docs/tree/master).
