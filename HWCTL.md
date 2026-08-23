@@ -159,7 +159,7 @@ As the overview of these helper scripts hints, they can enable functionality bey
 	- Pulsing the LED as a CPU-load driven heartbeat
 - Setting boot-time defaults for LED behaviour
 - Manual override of CPU-fan (for debug only)
-- CPU-fan curve tweaking (no longer required)
+- Controlling the CPU F_1 and F_2 fans via PID loop
  
 Fundamental to all advanced configuration is the discovery and enumeration of the hardware devices, communication interface addresses, and the associated sysfs objects with which scripts may usefully interact. Broadly, these are split along three paths:
 
@@ -387,9 +387,9 @@ fan-check                             # Print all temps, duty and RPM setpoints
 
 >**NOTE:** Ensure you restart the fan-pid service. If the fans sound like a jet-engine, the defensive 100% setting is still active. Confirm status using `fan-check` or `sudo systemctl status fan-pid.service` directly.
 
-### 3.2.4 Tweaking the curve permanently
+### 3.2.4 Controlling the CPU F_1 and F_2 fans via PID loop
 
-The PID loop used by `fan-pid` should greatly reduce the need for (any) manual intervention or tweaking of the fan-curve by through effective adaption to environmental conditions.
+The [PID loop](https://en.wikipedia.org/wiki/PID_controller) used by `fan-pid` (See: [fan-pid](/board/scripts/fan-pid)) should greatly reduce the need for (any) manual intervention or tweaking of the fan-curve by through effective adaption to environmental conditions.
 
 However, if required, the setpoints for each thermal zone, along with I- and P- term gains constants can be set within the fan-pid script. Restart the service to see the effect of changes.
 
